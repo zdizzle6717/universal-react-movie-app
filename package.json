@@ -1,0 +1,31 @@
+{
+  "name": "universal-react-movie-app",
+  "version": "1.0.0",
+  "description": "This is a universal javascript app built with react on the server side and client site demonstrated with simple movie data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zdizzle6717/universal-react-movie-app.git"
+  },
+  "keywords": [
+    "javascript",
+    "universal",
+    "react",
+    "starter",
+    "kit",
+    "app",
+    "reactjs",
+    "router",
+    "express",
+    "hapijs"
+  ],
+  "author": "Zack Anselm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zdizzle6717/universal-react-movie-app/issues"
+  },
+  "homepage": "https://github.com/zdizzle6717/universal-react-movie-app#readme"
+}
