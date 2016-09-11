@@ -36,5 +36,11 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# SASS Cache
+.sass*
+
+# Babel Cache
+babel_cache*
+
 # Environment Variables
 *envVariables.js

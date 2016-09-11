@@ -7,10 +7,10 @@ import { match, RouterContext } from 'react-router';
 import routes from './routes';
 import NotFoundPage from './components/NotFoundPage';
 
-// initialize the server and configure support for ejs templates
+// initialize the server and configure support for handlebars templates
 const app = new Express();
 const server = new Server(app);
-app.set('view engine', 'ejs');
+app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
 // define the folder that will be used for static assets
@@ -50,7 +50,7 @@ app.get('*', (req, res) => {
 });
 
 // start the server
-const port = 8001;
+const port = 8080;
 const env = 'production';
 server.listen(port, err => {
   if (err) {

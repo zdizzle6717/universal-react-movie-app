@@ -3,6 +3,10 @@ import AthletePreview from './AthletePreview';
 import athletes from '../data/athletes';
 
 export default class IndexPage extends React.Component {
+  componentDidMount() {
+    document.title = "React Movie App | Home";
+  }
+
   render() {
     return (
       <div className="home">
