@@ -1,0 +1,26 @@
+// Add spacing to divs
+// push-top, push-bottom, push-left, push-right
+
+$sides: 'top', 'right', 'bottom', 'left';
+@each $side in $sides {
+    .push-#{$side} {
+        margin-#{$side}: 10px !important;
+
+        &-2x {
+            margin-#{$side}: 20px !important;
+        }
+
+        &-3x {
+            margin-#{$side}: 30px !important;
+        }
+
+        &-4x {
+            margin-#{$side}: 40px !important;
+        }
+
+        &-5x {
+            margin-#{$side}: 50px !important;
+        }
+
+    }
+}

@@ -1,0 +1,72 @@
+
+.required {
+    &::before {
+        content: '*';
+        color: #e43838;
+        padding-right: 3px;
+    }
+}
+
+input, textarea, select {
+    &.ng-touched {
+        &.ng-invalid {
+            border: 1px solid #e43838;
+        }
+
+        &.ng-valid {
+            border: 1px solid #71c592;
+        }
+    }
+}
+
+.notification-backdrop {
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.25);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    .update-notification {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        padding: .5rem;
+        background: #3c8c3c;
+        color: white;
+        display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+        display: -ms-flexbox;  /* TWEENER - IE 10 */
+        display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+        display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+        align-items: center;
+        justify-content: center;
+        -webkit-justify-content: center;
+
+		&.success {
+            background: #3c8c3c;
+        }
+
+        &.error {
+            background: #a02323;
+        }
+
+        h4 {
+            margin: 0;
+        }
+    }
+
+    .delete-record-modal {
+        background: white;
+        width: auto;
+        padding: 1rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 0 5px 2px rgba(128, 128, 128, 0.81);
+    }
+}

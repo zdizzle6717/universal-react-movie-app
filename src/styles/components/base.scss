@@ -1,0 +1,62 @@
+// Base Styles that overwrite foundation imported stylesheet
+
+html, body {
+    font-family: 'PT Sans', sans-serif;
+    color: #363636;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'PT Sans';
+}
+
+.content-container {
+    margin: 0;
+}
+
+.view {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    padding: 0 2rem;
+}
+
+
+// Zurb Foundation Customization
+
+.row {
+    max-width: 85rem;
+}
+
+fieldset {
+    border: 1px solid #cacaca;
+    padding: 1rem;
+    border-collapse: collapse;
+    margin: .5rem 0 1.5rem;
+}
+
+
+
+// Helpers
+.hidden {
+    visibility: hidden;
+}
+.vertical-center {
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+
+
+
+// Media Query
+@media screen and (max-width: 900px) {
+    .view {
+        padding: 0 1rem;
+    }
+}
