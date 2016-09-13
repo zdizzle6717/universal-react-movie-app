@@ -14,10 +14,13 @@
 // Components
 @import 'components/base';
 @import 'components/buttons';
-@import 'components/menu';
 @import 'components/validation';
-
-@import 'components/global';
+@import 'components/page-not-found';
+@import 'components/header';
+@import 'components/footer';
 
 // Animation
 @import 'animations/animate';
+
+// Global Override
+@import 'components/global';

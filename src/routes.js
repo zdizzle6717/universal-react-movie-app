@@ -1,14 +1,16 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 import Layout from './components/Layout';
-import IndexPage from './components/IndexPage';
-import AthletePage from './components/AthletePage';
-import NotFoundPage from './components/NotFoundPage';
+import IndexPage from './components/pages/IndexPage';
+import MovieListPage from './components/pages/MovieListPage';
+import DirectorListPage from './components/pages/DirectorListPage';
+import NotFoundPage from './components/pages/NotFoundPage';
 
 const routes = (
   <Route path="/" component={Layout}>
     <IndexRoute component={IndexPage}/>
-    <Route path="athlete/:id" component={AthletePage}/>
+    <Route path="movies" component={MovieListPage}/>
+    <Route path="directors" component={DirectorListPage}/>
     <Route path="*" component={NotFoundPage}/>
   </Route>
 );

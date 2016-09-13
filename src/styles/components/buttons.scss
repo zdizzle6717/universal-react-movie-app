@@ -1,8 +1,19 @@
-
 [ng-click],
 [data-ng-click],
 [x-ng-click] {
     cursor: pointer;
+}
+
+.button {
+	background-color: $primary-800;
+
+	&:hover {
+		background-color: $primary-600;
+	}
+
+	&:active, &:focus {
+		background-color: $primary-700;
+	}
 }
 
 .action-buttons {
