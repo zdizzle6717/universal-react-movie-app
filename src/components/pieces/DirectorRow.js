@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export default class DirectorRow extends React.Component {
 	render() {
@@ -9,7 +10,7 @@ export default class DirectorRow extends React.Component {
 				<td>{this.props.bio}</td>
 				<td className="text-center">
 					<div className="action-buttons">
-						<a className="action"><i className="fa fa-search"></i></a>
+						<Link key="director" to={`/directors/${this.props.id}`} className="action"><i className="fa fa-search"></i></Link>
 						<a className="action"><i className="fa fa-pencil-square-o"></i></a>
 						<a className="action"><i className="fa fa-times"></i></a>
 					</div>

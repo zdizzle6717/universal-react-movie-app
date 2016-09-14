@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import IndexPage from './components/pages/IndexPage';
 import MovieListPage from './components/pages/MovieListPage';
 import MoviePage from './components/pages/MoviePage';
+import DirectorPage from './components/pages/DirectorPage';
 import DirectorListPage from './components/pages/DirectorListPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 
@@ -11,8 +12,9 @@ const routes = (
   <Route path="/" component={Layout}>
     <IndexRoute component={IndexPage}/>
     <Route path="movies" component={MovieListPage}/>
-    <Route path="movies/:id" component={MoviePage}/>
+    <Route path="movies/:movieId" component={MoviePage}/>
     <Route path="directors" component={DirectorListPage}/>
+	<Route path="directors/:directorId" component={DirectorPage}/>
     <Route path="*" component={NotFoundPage}/>
   </Route>
 );

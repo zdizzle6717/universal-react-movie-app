@@ -10,7 +10,7 @@ export default class Layout extends React.Component {
             <TopNav></TopNav>
         </header>
         <div className="content-container animate">{this.props.children}</div>
-        <footer>ReactJs app with server side routing an RESTful API built on HapiJS and PostgreSQL</footer>
+        <footer>ReactJs app with server side routing and RESTful API built on HapiJS and PostgreSQL</footer>
       </div>
     );
   }

@@ -15,7 +15,7 @@ export default class DirectorListPage extends React.Component {
   render() {
     return (
 		<div className="row">
-		    <h1>ReactJs, Hapi.js, & PostgreSQL</h1>
+		    <h1>ReactJs, Hapi.js & PostgreSQL</h1>
 		    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>All Directors</strong></h3>
 		    <div className="row">
 		        <div className="small-12 medium-4 large-4 columns">
