@@ -2,6 +2,14 @@ import React from 'react';
 import { Link } from 'react-router';
 
 export default class NotFoundPage extends React.Component {
+	constructor() {
+		super();
+	}
+
+	componetDidMount() {
+  	  document.title = "React Movie App | Page Not Found";
+    }
+
   render() {
     return (
       <div className="not-found">

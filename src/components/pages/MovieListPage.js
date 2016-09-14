@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
+import MovieRow from '../pieces/MovieRow';
+import movies from '../../data/movies';
 
 export default class MovieListPage extends React.Component {
+	constructor() {
+		super();
+	}
 
 	componetDidMount() {
   	  document.title = "React Movie App | Movies";
@@ -33,19 +38,9 @@ export default class MovieListPage extends React.Component {
   	                  </tr>
   	              </thead>
   	              <tbody>
-  	                  <tr>
-  	                      <td>title</td>
-  	                      <td>year</td>
-  	                      <td>synopsis</td>
-  	                      <td>firstName lastName</td>
-  	                      <td className="text-center">
-  	                          <div className="action-buttons">
-  	                              <a className="action"><i className="fa fa-search"></i></a>
-  	                              <a className="action"><i className="fa fa-pencil-square-o"></i></a>
-  	                              <a className="action"><i className="fa fa-times"></i></a>
-  	                          </div>
-  	                      </td>
-  	                  </tr>
+  	                  {movies.map((movie, i) =>
+						  <MovieRow key={i} {...movie} synopsis={movie.synopsis.substring(0, 70) + '...'} fullName={movie.Director.firstName + ' ' + movie.Director.lastName}></MovieRow>
+					  )}
   	              </tbody>
   	          </table>
   	      </div>

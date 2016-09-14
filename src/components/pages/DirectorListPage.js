@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router';
+import DirectorRow from '../pieces/DirectorRow';
+import directors from '../../data/directors';
 
 export default class DirectorListPage extends React.Component {
+	constructor() {
+		super();
+	}
 
 	componetDidMount() {
 		document.title = "React Movie App | Directors";
@@ -31,18 +36,9 @@ export default class DirectorListPage extends React.Component {
 		                </tr>
 		            </thead>
 		            <tbody>
-		                <tr className="animate">
-		                    <td>firstName</td>
-		                    <td>lastName</td>
-		                    <td>bio</td>
-		                    <td className="text-center">
-		                        <div className="action-buttons">
-		                            <a className="action"><i className="fa fa-search"></i></a>
-		                            <a className="action"><i className="fa fa-pencil-square-o"></i></a>
-		                            <a className="action"><i className="fa fa-times"></i></a>
-		                        </div>
-		                    </td>
-		                </tr>
+						{directors.map((director, i) =>
+  						  <DirectorRow key={i} {...director} bio={director.bio.substring(0, 70) + '...'}></DirectorRow>
+  					  )}
 		            </tbody>
 		        </table>
 		    </div>
