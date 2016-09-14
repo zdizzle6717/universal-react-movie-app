@@ -8,7 +8,7 @@ export default class DirectorPage extends React.Component {
 		super();
 	}
 
-	componetDidMount() {
+	componentDidMount() {
   	  document.title = "React Movie App | Director";
     }
 

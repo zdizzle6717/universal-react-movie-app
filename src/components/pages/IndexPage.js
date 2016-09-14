@@ -7,7 +7,7 @@ export default class IndexPage extends React.Component {
 		super();
 	}
 
-  componetDidMount() {
+  componentDidMount() {
 	  document.title = "React Movie App | Home";
   }
 
