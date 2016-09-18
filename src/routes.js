@@ -2,10 +2,12 @@ import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 import Layout from './components/Layout';
 import IndexPage from './components/pages/IndexPage';
-import MovieListPage from './components/pages/MovieListPage';
 import MoviePage from './components/pages/MoviePage';
+import MovieListPage from './components/pages/MovieListPage';
+import MovieEditPage from './components/pages/MovieEditPage';
 import DirectorPage from './components/pages/DirectorPage';
 import DirectorListPage from './components/pages/DirectorListPage';
+import DirectorEditPage from './components/pages/DirectorEditPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 
 const routes = (
@@ -13,8 +15,10 @@ const routes = (
     <IndexRoute component={IndexPage}/>
     <Route path="movies" component={MovieListPage}/>
     <Route path="movies/:movieId" component={MoviePage}/>
+    <Route path="movies/edit/:movieId" component={MovieEditPage}/>
     <Route path="directors" component={DirectorListPage}/>
 	<Route path="directors/:directorId" component={DirectorPage}/>
+	<Route path="directors/edit/:directorId" component={DirectorEditPage}/>
     <Route path="*" component={NotFoundPage}/>
   </Route>
 );

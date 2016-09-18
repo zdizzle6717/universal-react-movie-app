@@ -1,14 +1,26 @@
 import React from 'react';
 import MovieRow from '../pieces/MovieRow';
-import movies from '../../data/movies';
+import movieStore from '../../stores/movieStore'
 
 export default class IndexPage extends React.Component {
 	constructor() {
 		super();
+
+	        this.state = {
+	            movies: []
+	        }
+	        this.getAllMovies = this.getAllMovies.bind(this);
 	}
 
   componentDidMount() {
 	  document.title = "React Movie App | Home";
+	  this.getAllMovies();
+  }
+
+  getAllMovies() {
+	  movieStore.getAll().then(function(response) {
+		  this.setState({movies: response});
+	  }.bind(this));
   }
 
   render() {
@@ -46,7 +58,7 @@ export default class IndexPage extends React.Component {
 		                </tr>
 		            </thead>
 		            <tbody>
-						{movies.map((movie, i) =>
+						{this.state.movies.map((movie, i) =>
   						  <MovieRow key={i} {...movie} synopsis={movie.synopsis.substring(0, 70) + '...'} fullName={movie.Director.firstName + ' ' + movie.Director.lastName}></MovieRow>
   					  )}
 		            </tbody>
