@@ -1,7 +1,7 @@
 'use strict';
 let axios = require('axios');
 
-let movieStore = {
+let movieService = {
 	get: get,
 	getAll: getAll
 };
@@ -20,4 +20,4 @@ function getAll() {
 		});
 }
 
-module.exports = movieStore;
+module.exports = movieService;

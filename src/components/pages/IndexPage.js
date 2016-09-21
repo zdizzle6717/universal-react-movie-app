@@ -1,6 +1,6 @@
 import React from 'react';
 import MovieRow from '../pieces/MovieRow';
-import movieStore from '../../stores/movieStore'
+import movieService from '../../services/movieService'
 
 export default class IndexPage extends React.Component {
 	constructor() {
@@ -18,7 +18,7 @@ export default class IndexPage extends React.Component {
   }
 
   getAllMovies() {
-	  movieStore.getAll().then(function(response) {
+	  movieService.getAll().then(function(response) {
 		  this.setState({movies: response});
 	  }.bind(this));
   }

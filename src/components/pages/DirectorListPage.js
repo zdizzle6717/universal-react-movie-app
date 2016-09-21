@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import DirectorRow from '../pieces/DirectorRow';
-import directorStore from '../../stores/directorStore';
+import directorService from '../../services/directorService';
 
 export default class DirectorListPage extends React.Component {
     constructor(props, context) {
@@ -19,7 +19,7 @@ export default class DirectorListPage extends React.Component {
     }
 
     getAllDirectors() {
-        directorStore.getAll().then(function(response) {
+        directorService.getAll().then(function(response) {
             this.setState({directors: response});
         }.bind(this));
     }

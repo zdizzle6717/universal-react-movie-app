@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import MovieRow from '../pieces/MovieRow';
-import movieStore from '../../stores/movieStore'
+import movieService from '../../services/movieService'
 
 export default class MovieListPage extends React.Component {
     constructor(props, context) {
@@ -19,7 +19,7 @@ export default class MovieListPage extends React.Component {
     }
 
     getAllMovies() {
-        movieStore.getAll().then(function(response) {
+        movieService.getAll().then(function(response) {
             this.setState({movies: response});
         }.bind(this));
     }
