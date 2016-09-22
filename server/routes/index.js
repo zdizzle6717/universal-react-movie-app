@@ -71,6 +71,20 @@ module.exports = [
 			}
 		}
 	},
+	{
+		method: 'GET',
+		path: '/api/users',
+		handler: api.users.getAll,
+		config: {
+			tags: ['api'],
+            description: 'Get all users',
+            notes: 'Get all users',
+			auth: {
+		      strategy: 'jsonWebToken',
+		      scope: ['admin']
+		    }
+		}
+	},
 
 	// File Upload
     {

@@ -30,6 +30,16 @@ let users = {
 		res({
 			id_token: createToken(req.pre.user)
 		}).code(201);
+	},
+	getAll: function(req, res) {
+		models.User.findAll({
+			attributes: ['username', 'email', 'createdAt'],
+			limit: 50,
+			order: '"updatedAt" DESC'
+		})
+		.then(function(users) {
+			res(users).code(200);
+		});
 	}
 }
 
@@ -170,9 +180,9 @@ let movies = {
 			limit: 50,
 			order: '"updatedAt" DESC'
 		})
-            .then(function(movies) {
-                res(movies).code(200);
-            });
+        .then(function(movies) {
+	    	res(movies).code(200);
+		});
     },
     create: function(req, res) {
         models.Movie.create({
