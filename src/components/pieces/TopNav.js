@@ -18,7 +18,7 @@ export default class TopNav extends React.Component {
 				<Link key="directors" to="/directors" activeClassName="active">Directors</Link>
 			</li>
 			<li className="animate untoggled">
-				<a href="http://www.demo.zackanselm.com:3001/api/documentation" target="_blank">Api Guide</a>
+				<a href="http://www.react.zackanselm.com:8000/api/documentation" target="_blank">Api Guide</a>
 			</li>
 			<li className="animate untoggled">
 				<a href="https://github.com/zdizzle6717/universal-react-movie-app" target="_blank">Git</a>
