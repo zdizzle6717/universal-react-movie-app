@@ -23,6 +23,6 @@ sass.render({
             result.warnings().forEach(function(warn) {
                 console.warn(warn.toString());
             });
-            fs.writeFileSync('src/static/css/style.css', dataString, 'utf8');
+            fs.writeFileSync('dist/css/style.css', dataString, 'utf8');
         });
 });

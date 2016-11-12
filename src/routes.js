@@ -14,10 +14,12 @@ const routes = (
   <Route path="/" component={Layout}>
     <IndexRoute component={IndexPage}/>
     <Route path="movies" component={MovieListPage}/>
-    <Route path="movies/:movieId" component={MoviePage}/>
+    <Route path="movies/view/:movieId" component={MoviePage}/>
+    <Route path="movies/create" component={MovieEditPage}/>
     <Route path="movies/edit/:movieId" component={MovieEditPage}/>
     <Route path="directors" component={DirectorListPage}/>
-	<Route path="directors/:directorId" component={DirectorPage}/>
+	<Route path="directors/view/:directorId" component={DirectorPage}/>
+	<Route path="directors/create" component={DirectorEditPage}/>
 	<Route path="directors/edit/:directorId" component={DirectorEditPage}/>
     <Route path="*" component={NotFoundPage}/>
   </Route>

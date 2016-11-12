@@ -2,10 +2,11 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-    entry: path.join(__dirname, 'src', 'app-client.js'),
+    entry: path.join(__dirname, 'src', 'index.js'),
     output: {
-        path: path.join(__dirname, 'src', 'static', 'js'),
-        filename: 'bundle.js'
+        path: path.join(__dirname, 'dist', 'js'),
+        filename: 'app.js',
+		sourceMapFilename: 'app.map'
     },
     module: {
         loaders: [{
@@ -27,9 +28,9 @@ module.exports = {
             compress: {
                 warnings: false
             },
-            mangle: true,
-            sourcemap: false,
-            beautify: false,
+            mangle: false,
+            sourcemap: true,
+            beautify: true,
             dead_code: true
         })
     ]

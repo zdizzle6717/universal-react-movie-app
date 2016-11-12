@@ -11,9 +11,9 @@ export default class MovieRow extends React.Component {
 				<td>{this.props.fullName}</td>
 				<td className="text-center">
 					<div className="action-buttons">
-						<Link key="movie" to={`/movies/${this.props.id}`} className="action"><i className="fa fa-search"></i></Link>
+						<Link key="movie" to={`/movies/view/${this.props.id}`} className="action"><i className="fa fa-search"></i></Link>
 						<Link key="movieEdit" to={`/movies/edit/${this.props.id}`} className="action"><i className="fa fa-pencil-square-o"></i></Link>
-						<a className="action"><i className="fa fa-times"></i></a>
+						<a className="action"><i className="fa fa-times" onClick={this.props.removeMovie}></i></a>
 					</div>
 				</td>
 			</tr>

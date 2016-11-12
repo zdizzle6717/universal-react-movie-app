@@ -1,40 +1,69 @@
 import React from 'react';
 import { Link } from 'react-router';
-import NotFoundPage from '../pages/NotFoundPage';
-import movies from '../../data/movies';
+import MovieActions from '../../actions/MovieActions';
+import MovieStore from '../../stores/MovieStore';
 
 export default class MoviePage extends React.Component {
 	constructor() {
 		super();
+
+		this.state = {
+            movie: {},
+			director: {}
+        }
+
+        this.onChange = this.onChange.bind(this);
 	}
 
-	componentDidMount() {
-  	  document.title = "React Movie App | Movie";
+	componentWillMount() {
+        MovieStore.addChangeListener(this.onChange);
     }
 
-  render() {
-	  let routeId = this.props.params.movieId;
-	  let movie = movies.filter((movie) => movie.id == routeId)[0];
-	  if (!movie) {
-		  return <NotFoundPage/>;
-	  }
-    return (
-		<div className="row">
-		    <h1>ReactJs, Hapi.js & PostgreSQL</h1>
-		    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{movie.title}</strong></h3>
-		    <h5>ID: {movie.id} | Director: {movie.Director.firstName} {movie.Director.lastName} | {movie.year} | {movie.genre} |
-		        {movie.rating}<i className="fa fa-star"></i>
-		    </h5>
-			<div className="medium-3 columns">
-				<a href={`/uploads/movies/${movie.coverImg}`} target="_blank"><img src={`/uploads/movies/${movie.coverImg}`}/></a>
+    componentDidMount() {
+        document.title = "React Movie App | Movie";
+        MovieActions.getMovie(this.props.params.movieId);
+    }
+
+    componentWillUnmount() {
+        MovieStore.removeChangeListener(this.onChange);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        MovieActions.getMovie(nextProps.params.id)
+    }
+
+    onChange() {
+        this.setState({
+            movie: MovieStore.getMovie(this.props.params.movieId)
+        });
+		this.setState({
+            director: MovieStore.getMovie(this.props.params.movieId).Director
+        });
+    }
+
+	render() {
+	    return (
+			<div className="row">
+			    <h1>ReactJs, Hapi.js & PostgreSQL</h1>
+			    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{this.state.movie.title}</strong></h3>
+			    <h5>ID: {this.state.movie.id} | Director: {this.state.director.firstName} {this.state.director.lastName} | {this.state.movie.year} | {this.state.movie.genre} |
+			        {this.state.movie.rating}<i className="fa fa-star"></i>
+			    </h5>
+				{
+					this.state.movie.coverImg ?
+					<div className="medium-3 columns">
+						<a href={`/uploads/movies/${this.state.movie.coverImg}`} target="_blank"><img src={`/uploads/movies/${this.state.movie.coverImg}`}/></a>
+					</div> :
+					null
+				}
+
+				<div className="medium-9 columns">
+					<label><u>Storyline</u></label>
+					<p className="text-justify">
+						{this.state.movie.description}
+					</p>
+				</div>
 			</div>
-			<div className="medium-9 columns">
-				<label><u>Storyline</u></label>
-				<p className="text-justify">
-					{movie.description}
-				</p>
-			</div>
-		</div>
-    );
-  }
+		);
+  	}
 }

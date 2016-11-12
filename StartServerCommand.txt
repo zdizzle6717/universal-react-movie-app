@@ -1,3 +1,0 @@
-forever start -c 'node_modules/.bin/babel-node' src/server.js
-
-NODE_ENV=production node_modules/.bin/webpack -p

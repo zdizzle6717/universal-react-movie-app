@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
 import NotFoundPage from '../pages/NotFoundPage';
-import movieService from '../../services/movieService';
+import MovieActions from '../../actions/MovieActions';
+import MovieStore from '../../stores/MovieStore';
 
 export default class MoviePage extends React.Component {
     constructor() {
@@ -13,25 +14,63 @@ export default class MoviePage extends React.Component {
             },
             newMovie: false
         }
+
+		this.onChange = this.onChange.bind(this);
+		this.handleInputChange = this.handleInputChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillMount() {
-        let routeId = this.props.params.movieId;
-        let movie = {};
-        this.getMovie(routeId).then(function(response) {
-            this.setState({movie: response});
-        }.bind(this)).catch(function(response) {
-            this.setState({newMovie: true});
-        }.bind(this));
-    }
+	componentWillMount() {
+		MovieStore.addChangeListener(this.onChange);
+	}
 
     componentDidMount() {
-        document.title = "React Movie App | Movie Edit";
+        document.title = "React Movie App | Edit Movie";
+		if (this.props.params.movieId) {
+			MovieActions.getMovie(this.props.params.movieId);
+		} else {
+			this.setState({
+				newMovie: true
+			});
+		}
     }
 
-    getMovie(id) {
-        return movieService.get(id);
-    }
+	componentWillUnmount() {
+		MovieStore.removeChangeListener(this.onChange);
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.params.movieId) {
+			MovieActions.getMovie(nextProps.params.movieId);
+		}
+	}
+
+	onChange() {
+		this.setState({
+			movie: MovieStore.getMovie(this.props.params.movieId)
+		})
+	}
+
+	handleInputChange(e) {
+		let provider = this.state.provider;
+		provider[e.target.name] = e.target.value;
+		this.setState({
+			provider: provider
+		})
+	}
+
+	handleSubmit(e) {
+		e.preventDefault();
+		if (this.state.newProvider) {
+			ProviderActions.createProvider(this.state.provider).then(() => {
+				browserHistory.push('/providers/edit/' + this.state.movie.id);
+			});
+		} else {
+			ProviderActions.updateProvider(this.state.provider.id, this.state.provider).then((response) => {
+				browserHistory.push('/providers');
+			});
+		}
+	}
 
     render() {
         return (
@@ -41,7 +80,7 @@ export default class MoviePage extends React.Component {
 					<strong className="animate"> {this.state.newMovie ? 'Add New Movie' : `Edit Movie (ID: ${this.state.movie.id})`}</strong>
 			    </h3>
 
-			    <form name="movieForm" novalidate>
+			    <form name="movieForm" noValidate>
 			        <div className="row">
 			            <div className="medium-4 columns">
 			                <label className="required">Title

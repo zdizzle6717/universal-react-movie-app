@@ -2,7 +2,7 @@
 
 .menu {
 	margin: 0;
-	background: $primary;
+	background: $primary-500;
 	padding: 0;
 	font-size: 1.2rem;
 	line-height: 16rem;
@@ -23,7 +23,7 @@
 
 			&:hover,
 			&.active {
-				background: $primary-800;
+				background: $primary-700;
 			}
 
 			&.menu-toggle {
@@ -46,7 +46,7 @@
 
 		a {
 			&.home-link {
-				background: $primary;
+				background: $primary-500;
 			}
 		}
 	}

@@ -1,33 +1,56 @@
 // Main view
-.view.ng-enter {
-  animation: 500ms fade-in;
-  z-index: 0;
+$animations: 'fade';
+@each $animation in $animations {
+	.#{$animation}-enter,
+	.#{$animation}-appear {
+		opacity: 0;
+	    animation: #{$animation}-in 500ms;
+
+		&.#{$animation}-enter-active,
+		&.#{$animation}-appear-active {
+			opacity: 1;
+		}
+	}
+
+	.#{$animation}-leave {
+		opacity: 1;
+	    animation: #{$animation}-out 500ms;
+
+		&.#{$animation}-leave-active {
+			opacity: 0;
+		}
+	}
 }
 
-.view.ng-leave {
-  animation: 500ms fade-out;
-  z-index: 0;
-}
+.content-container {
+	position: relative;
 
-.animate.ng-enter, .animate.ng-leave {
-  transition: all 500ms;
-}
+	.view-enter,
+	.view-appear {
+		position: absolute;
+		left: 0;
+		right: 0;
+		opacity: 0;
+		animation: fade-in 500ms;
 
-.animate.ng-enter,
-.animate.ng-leave.ng-leave-active {
-  opacity:0;
-}
+		&.view-enter-active,
+		&.view-appear-active {
+			opacity: 1;
+		}
+	}
 
-.animate.ng-leave,
-.animate.ng-enter.ng-enter-active {
-  opacity:1;
-}
+	.view-leave {
+		position: absolute;
+		left: 0;
+		right: 0;
+		opacity: 1;
+		animation: fade-out 500ms;
 
-// Angulars ng-cloak directive to prevent a flicker pre-rendering content
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-  display: none !important;
+		&.view-leave-active {
+			opacity: 0;
+		}
+	}
 }
-
 
 // Animation
 @keyframes fade-in {
