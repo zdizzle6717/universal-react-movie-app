@@ -6,19 +6,14 @@ import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
-export default class Input extends React.Component {
-	// TODO: Show message text as an array of validation messages
-
+export default class TextArea extends React.Component {
 	constructor() {
         super();
 
         this.state = {
-            valid: true,
+			valid: true,
 			touched: false,
-			pristine: true,
-			focused: false,
-			blurred: false,
-			messageText: 'Invalid Entry'
+			pristine: true
         };
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -26,12 +21,7 @@ export default class Input extends React.Component {
 		this.handleBlur = this.handleBlur.bind(this);
 		this.validateInit = this.validateInit.bind(this);
 		this.validateInput = this.validateInput.bind(this);
-		this.updateMessageText = this.updateMessageText.bind(this);
     }
-
-	componentDidMount() {
-		this.updateMessageText();
-	}
 
 	componentWillReceiveProps(nextProps) {
 		if (this.state.pristine) {
@@ -40,13 +30,10 @@ export default class Input extends React.Component {
 	}
 
 	validateInit(props) {
-		let type = props.validate;
-		let value = props.value;
-		let empty = props.required ? (value ? false : true) : false;
-		let validity = defaultValidations[type].regex.test(value)  && !empty;
+		let validity = props.required ? (props.value ? true : false) : true;
 		this.setState({
 			valid: validity,
-			pristine: empty
+			pristine: !props.value
 		});
 		let input = {
 			name: props.name,
@@ -58,17 +45,8 @@ export default class Input extends React.Component {
 	}
 
 	validateInput(e) {
-		let type = this.props.validate;
-		let value = e.target.value;
-		let empty = this.props.required ? (value ? false : true) : false;
-		let validity = defaultValidations[type].regex.test(value) && !empty;
-		if (empty) {
-			this.setState({
-				messageText: 'Required Field'
-			})
-		} else {
-			this.updateMessageText();
-		}
+		e.preventDefault();
+		let validity = this.props.required ? (e.target.value ? true : false) : true;
 		this.setState({
 			valid: validity,
 			pristine: false
@@ -80,13 +58,6 @@ export default class Input extends React.Component {
 		}
 		FormActions.addInput(input);
 		this.props.handleInputChange(e);
-	}
-
-	updateMessageText() {
-		let newText = this.props.validateMessage || defaultValidations[this.props.validate].message;
-		this.setState({
-			messageText: newText
-		});
 	}
 
 	handleMouseDown() {
@@ -122,22 +93,17 @@ export default class Input extends React.Component {
 
 		return (
 			<div className="validate-error-element">
-				<input className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} placeholder={this.props.placeholder} min={this.props.min} max={this.props.max} onChange={this.validateInput} onMouseDown={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}/>
-				<div className="validate-errors">
-					<div className="validate-error">{this.state.messageText}</div>
-				</div>
+				<textarea className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} rows={this.props.rows} placeholder={this.props.placeholder} onChange={this.validateInput} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}>
+				</textarea>
 			</div>
 		)
 	}
 }
 
-Input.propTypes = {
-	type: React.PropTypes.string.isRequired,
+TextArea.propTypes = {
 	name: React.PropTypes.string.isRequired,
 	placeholder: React.PropTypes.string,
-	min: React.PropTypes.string,
-	max: React.PropTypes.string,
-	validate: React.PropTypes.string.isRequired,
+	rows: React.PropTypes.string,
 	validateMessage: React.PropTypes.string,
 	handleInputChange: React.PropTypes.func.isRequired,
 	required: React.PropTypes.bool,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
-import NotFoundPage from '../pages/NotFoundPage';
+import AlertActions from '../../library/alerts/actions/AlertActions';
+import { Form, Input, TextArea, Select } from '../../library/validations'
 import DirectorActions from '../../actions/DirectorActions';
 import DirectorStore from '../../stores/DirectorStore';
 
@@ -16,6 +17,7 @@ export default class DirectorEditPage extends React.Component {
 		this.onChange = this.onChange.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+		this.showAlert = this.showAlert.bind(this);
     }
 
     componentWillMount() {
@@ -25,7 +27,10 @@ export default class DirectorEditPage extends React.Component {
 	componentDidMount() {
         document.title = "React Movie App | Edit Director";
 		if (this.props.params.directorId) {
-			DirectorActions.getDirector(this.props.params.directorId);
+			DirectorActions.getDirector(this.props.params.directorId).catch(() => {
+				this.showAlert('directorNotFound');
+				browserHistory.push('/directors');
+			});
 		} else {
 			this.setState({
 				newDirector: true
@@ -36,12 +41,6 @@ export default class DirectorEditPage extends React.Component {
     componentWillUnmount() {
 		DirectorStore.removeChangeListener(this.onChange);
 	}
-
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.params.directorId) {
-			DirectorActions.getDirector(nextProps.params.directorId)
-		}
-    }
 
 	onChange() {
 		this.setState({
@@ -61,13 +60,49 @@ export default class DirectorEditPage extends React.Component {
 		e.preventDefault();
 		if (this.state.newDirector) {
 			DirectorActions.createDirector(this.state.director).then(() => {
+				this.showAlert('directorCreated');
 				browserHistory.push('/directors/edit/' + this.state.director.id);
 			});
 		} else {
 			DirectorActions.updateDirector(this.state.director.id, this.state.director).then(() => {
+				this.showAlert('directorUpdated');
 				browserHistory.push('/directors');
 			});
 		}
+	}
+
+	showAlert(selector) {
+		const alerts = {
+			'directorNotFound': () => {
+				AlertActions.addAlert({
+					show: true,
+					title: 'Director Not Found',
+					message: 'A director with that ID was not found.',
+					type: 'error',
+					delay: 3000
+				});
+			},
+			'directorCreated': () => {
+				AlertActions.addAlert({
+					show: true,
+					title: 'Director Created',
+					message: 'A new director was successfully created.',
+					type: 'success',
+					delay: 3000
+				});
+			},
+			'directorUpdated': () => {
+				AlertActions.addAlert({
+					show: true,
+					title: 'Director Updated',
+					message: `${this.state.director.firstName} ${this.state.director.lastName} was updated successfully.`,
+					type: 'success',
+					delay: 3000
+				});
+			}
+		}
+
+		return alerts[selector]();
 	}
 
 	render() {
@@ -78,32 +113,27 @@ export default class DirectorEditPage extends React.Component {
 					<strong className="animate"> {this.state.newDirector ? 'Add New Director' : `Edit Director (ID: ${this.state.director.id})`}</strong>
 				</h3>
 
-				<form name="directorForm" noValidate>
+				<Form name="directorForm" submitText={this.state.newDirector ? 'Add New Director' : 'Update Director'} handleSubmit={this.handleSubmit}>
 					<div className="row">
 						<div className="medium-6 columns">
 							<label className="required">First Name
-								<input type="text" name="firstName" value={this.state.director.firstName} onChange={this.handleInputChange} placeholder="" required />
+								<Input type="text" name="firstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
 							</label>
 						</div>
 						<div className="medium-6 columns">
 							<label className="required">Last Name
-								<input type="text" name="lastName" value={this.state.director.lastName} onChange={this.handleInputChange} placeholder="" required />
+								<Input type="text" name="lastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
 							</label>
 						</div>
 					</div>
 					<div className="row">
 						<div className="medium-12 columns">
 							<label className="required">Bio
-								<textarea placeholder="" name="bio" value={this.state.director.bio} onChange={this.handleInputChange} rows="2" required></textarea>
+								<TextArea placeholder="" name="bio" value={this.state.director.bio} handleInputChange={this.handleInputChange} rows="2" required={true}/>
 							</label>
 						</div>
 					</div>
-					<div className="row text-right">
-						<div className="medium-12 columns">
-							<div className="button animate" type="button" onClick={this.handleSubmit}>{this.state.newDirector ? 'Add New Director' : 'Update Director'}</div>
-						</div>
-					</div>
-				</form>
+				</Form>
 			</div>
 		);
 	}

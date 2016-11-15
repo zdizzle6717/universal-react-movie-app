@@ -45,6 +45,7 @@ export default class Select extends React.Component {
 	}
 
 	validateInput(e) {
+		e.preventDefault();
 		let validity = this.props.required ? (e.target.value ? true : false) : true;
 		this.setState({
 			valid: validity,
@@ -92,7 +93,7 @@ export default class Select extends React.Component {
 
 		return (
 			<div className="validate-error-element">
-				<select className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} onChange={this.validateInput} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur}>
+				<select className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} onChange={this.validateInput} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}>
 					{this.props.children}
 				</select>
 			</div>
@@ -103,5 +104,7 @@ export default class Select extends React.Component {
 Select.propTypes = {
 	name: React.PropTypes.string.isRequired,
 	validateMessage: React.PropTypes.string,
-	handleInputChange: React.PropTypes.func.isRequired
+	handleInputChange: React.PropTypes.func.isRequired,
+	required: React.PropTypes.bool,
+	disabled: React.PropTypes.bool
 }

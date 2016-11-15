@@ -91,6 +91,9 @@ input.dirty.invalid {
 
 select.touched.invalid:not(.focused),
 select.blurred.invalid,
-select.dirty.invalid {
+select.dirty.invalid,
+textarea.touched.invalid:not(.focused),
+textarea.blurred.invalid,
+textarea.dirty.invalid {
 	border: 1px solid $alert-600;
 }

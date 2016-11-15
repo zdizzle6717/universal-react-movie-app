@@ -125,7 +125,7 @@ export default class DirectorListPage extends React.Component {
 	            <div className="row">
 	                <div className="small-12 medium-6 columns">
 	                    <Link key="createDirector" to="/directors/create">
-							<button type="button" className="button small-12 medium-8 large-6">
+							<button type="button" className="button primary small-12 medium-8 large-6">
 	                        <i className="fa fa-plus"></i> Add New Director</button>
 						</Link>
 	                </div>
