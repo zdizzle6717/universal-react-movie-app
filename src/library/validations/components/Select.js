@@ -7,10 +7,13 @@ import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
 export default class Select extends React.Component {
+	// NOTE: this.state.initial represents an input that already has a value but has not yet been validated
+
 	constructor() {
         super();
 
         this.state = {
+			initial: true,
 			valid: true,
 			touched: false,
 			pristine: true
@@ -23,21 +26,47 @@ export default class Select extends React.Component {
 		this.validateInput = this.validateInput.bind(this);
     }
 
+	componentDidMount() {
+		let validity = this.props.required ? false : true;
+		this.setState({
+			valid: validity
+		});
+		let input = {
+			name: this.props.name,
+			value: this.props.value,
+			valid: validity
+		};
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
+	}
+
 	componentWillReceiveProps(nextProps) {
-		if (this.state.pristine) {
+		if (this.state.initial && this.state.pristine && nextProps.value) {
 			this.validateInit(nextProps);
 		}
+	}
+
+	componentWillUnmount() {
+		let input = {
+			name: this.props.name
+		}
+		setTimeout(() => {
+			FormActions.removeInput(input);
+		});
 	}
 
 	validateInit(props) {
 		let validity = props.required ? (props.value ? true : false) : true;
 		this.setState({
-			valid: validity,
-			pristine: !props.value
+			initial: false,
+			valid: validity
 		});
 		let input = {
 			name: props.name,
-			valid: validity
+			value: props.value,
+			valid: validity,
+			initial: false
 		};
 		setTimeout(() => {
 			FormActions.addInput(input);
@@ -53,6 +82,7 @@ export default class Select extends React.Component {
 		});
 		let input = {
 			name: e.target.name,
+			value: e.target.value,
 			valid: validity,
 			initial: false
 		}

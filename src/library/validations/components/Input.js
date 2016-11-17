@@ -8,11 +8,13 @@ import FormStore from '../stores/FormStore';
 
 export default class Input extends React.Component {
 	// TODO: Show message text as an array of validation messages
+	// NOTE: this.state.initial represents an input that already has a value but has not yet been validated
 
-	constructor() {
-        super();
+	constructor(props, context) {
+        super(props, context);
 
         this.state = {
+			initial: true,
             valid: true,
 			touched: false,
 			pristine: true,
@@ -31,26 +33,50 @@ export default class Input extends React.Component {
 
 	componentDidMount() {
 		this.updateMessageText();
+		let validity = this.props.required ? false : true;
+		this.setState({
+			valid: validity
+		});
+		let input = {
+			name: this.props.name,
+			value: this.props.value,
+			valid: validity
+		};
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (this.state.pristine) {
+		if (this.state.initial && this.state.pristine && nextProps.value) {
 			this.validateInit(nextProps);
 		}
 	}
 
+	componentWillUnmount() {
+		let input = {
+			name: this.props.name
+		}
+		setTimeout(() => {
+			FormActions.removeInput(input);
+		});
+	}
+
+	// This checks the validation of any input containing data on first render
 	validateInit(props) {
 		let type = props.validate;
 		let value = props.value;
 		let empty = props.required ? (value ? false : true) : false;
 		let validity = defaultValidations[type].regex.test(value)  && !empty;
 		this.setState({
-			valid: validity,
-			pristine: empty
+			initial: false,
+			valid: validity
 		});
 		let input = {
 			name: props.name,
-			valid: validity
+			value: value,
+			valid: validity,
+			initial: false
 		};
 		setTimeout(() => {
 			FormActions.addInput(input);
@@ -75,6 +101,7 @@ export default class Input extends React.Component {
 		});
 		let input = {
 			name: e.target.name,
+			value: e.target.value,
 			valid: validity,
 			initial: false
 		}
@@ -97,7 +124,8 @@ export default class Input extends React.Component {
 
 	handleFocus() {
 		this.setState({
-			focused: true
+			focused: true,
+			blurred: false
 		})
 	}
 

@@ -9,5 +9,11 @@ export default {
 			actionType: FormConstants.ADD_INPUT,
 			input: input
 		});
+	},
+	removeInput: (input) => {
+		AppDispatcher.dispatch({
+			actionType: FormConstants.REMOVE_INPUT,
+			input: input
+		});
 	}
 }

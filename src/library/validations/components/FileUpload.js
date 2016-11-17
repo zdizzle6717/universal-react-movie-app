@@ -6,6 +6,8 @@ import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
 export default class FileUpload extends React.Component {
+	// TODO: Add validation functionality, drag & drop, etc.
+
 	constructor() {
 		super();
 

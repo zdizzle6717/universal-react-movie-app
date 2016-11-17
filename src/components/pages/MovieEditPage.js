@@ -208,19 +208,19 @@ export default class MoviePage extends React.Component {
 					            <div className="row">
 					                <div className="medium-6 columns">
 					                    <label className="required">First Name
-											<Input type="text" name="Director.firstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+											<Input type="text" name="directorfirstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
 					                    </label>
 					                </div>
 					                <div className="medium-6 columns">
 					                    <label className="required">Last Name
-											<Input type="text" name="Director.lastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+											<Input type="text" name="directorlastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
 					                    </label>
 					                </div>
 					            </div>
 					            <div className="row">
 					                <div className="medium-12 columns">
 					                    <label className="required">Bio
-					                        <TextArea name="bio" value={this.state.director.bio} handleInputChange={this.handleInputChange} placeholder="Enter a director biography..." rows="2" required={true} />
+					                        <TextArea name="directorBio" value={this.state.director.bio} handleInputChange={this.handleInputChange} placeholder="Enter a director biography..." rows="2" required={true}/>
 					                    </label>
 					                </div>
 					            </div>
@@ -230,7 +230,7 @@ export default class MoviePage extends React.Component {
 			        <div className="row">
 			            <div className="medium-4 columns">
 			                <label className="required">Year
-								<Input type="number" name="year" value={this.state.movie.year} handleInputChange={this.handleInputChange} validate="allCharacters" required={true}/>
+								<Input type="number" name="year" value={this.state.movie.year} handleInputChange={this.handleInputChange} validate="numbersOnly" required={true}/>
 			                </label>
 			            </div>
 			            <div className="medium-4 columns">
@@ -240,13 +240,13 @@ export default class MoviePage extends React.Component {
 			            </div>
 			            <div className="medium-4 columns">
 			                <label className="required">Rating
-								<Input type="number" name="rating" value={this.state.movie.rating} handleInputChange={this.handleInputChange} min="1" max="5" validate="allCharacters" required={true}/>
+								<Input type="number" name="rating" value={this.state.movie.rating} handleInputChange={this.handleInputChange} min="1" max="5" validate="numbersOnly" required={true}/>
 			                </label>
 			            </div>
 			        </div>
 			        <div className="row">
 			            <div className="medium-6 columns">
-			                <label className="required">Movie Cover Upload
+			                <label>Movie Cover Upload
 			                    <FileUpload name="movieCover" value={this.state.movie.coverImg} handleFileUpload={this.handleFileUpload} multiple={false} accept="image/*"></FileUpload>
 			                </label>
 			            </div>
