@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import defaultValidations from '../constants/defaultValidations'
 import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
@@ -8,6 +9,7 @@ import FormStore from '../stores/FormStore';
 
 export default class Input extends React.Component {
 	// TODO: Show message text as an array of validation messages
+	// TODO: Set invalid if min/max is not met
 	// NOTE: this.state.initial represents an input that already has a value but has not yet been validated
 
 	constructor(props, context) {
@@ -20,7 +22,8 @@ export default class Input extends React.Component {
 			pristine: true,
 			focused: false,
 			blurred: false,
-			messageText: 'Invalid Entry'
+			messageText: 'Invalid Entry',
+			form: ''
         };
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -31,15 +34,22 @@ export default class Input extends React.Component {
 		this.updateMessageText = this.updateMessageText.bind(this);
     }
 
+	componentWillMount() {
+	}
+
 	componentDidMount() {
+		let elem = ReactDOM.findDOMNode(this);
+		let formName = elem.closest('form').getAttribute('name');
 		this.updateMessageText();
 		let validity = this.props.required ? false : true;
 		this.setState({
-			valid: validity
+			valid: validity,
+			form: formName
 		});
 		let input = {
 			name: this.props.name,
 			value: this.props.value,
+			form: formName,
 			valid: validity
 		};
 		setTimeout(() => {
@@ -53,9 +63,11 @@ export default class Input extends React.Component {
 		}
 	}
 
+	// This will update validation in the case that an input is conditional visible
 	componentWillUnmount() {
 		let input = {
-			name: this.props.name
+			name: this.props.name,
+			form: this.state.form
 		}
 		setTimeout(() => {
 			FormActions.removeInput(input);
@@ -64,10 +76,13 @@ export default class Input extends React.Component {
 
 	// This checks the validation of any input containing data on first render
 	validateInit(props) {
+		let elem = ReactDOM.findDOMNode(this);
+		let formName = elem.closest('form').getAttribute('name');
 		let type = props.validate;
 		let value = props.value;
 		let empty = props.required ? (value ? false : true) : false;
 		let validity = defaultValidations[type].regex.test(value)  && !empty;
+		validity = props.inputMatch ? (value === props.inputMatch && validity) : validity;
 		this.setState({
 			initial: false,
 			valid: validity
@@ -76,6 +91,7 @@ export default class Input extends React.Component {
 			name: props.name,
 			value: value,
 			valid: validity,
+			form: formName,
 			initial: false
 		};
 		setTimeout(() => {
@@ -88,10 +104,19 @@ export default class Input extends React.Component {
 		let value = e.target.value;
 		let empty = this.props.required ? (value ? false : true) : false;
 		let validity = defaultValidations[type].regex.test(value) && !empty;
+		validity = this.props.inputMatch ? (value === this.props.inputMatch && validity) : validity;
 		if (empty) {
 			this.setState({
 				messageText: 'Required Field'
 			})
+		} else if (this.props.inputMatch) {
+			if (value !== this.props.inputMatch) {
+				this.setState({
+					messageText: 'Fields Do Not Match'
+				})
+			} else {
+				this.updateMessageText();
+			}
 		} else {
 			this.updateMessageText();
 		}
@@ -103,6 +128,7 @@ export default class Input extends React.Component {
 			name: e.target.name,
 			value: e.target.value,
 			valid: validity,
+			form: this.state.form,
 			initial: false
 		}
 		FormActions.addInput(input);
@@ -169,5 +195,6 @@ Input.propTypes = {
 	validateMessage: React.PropTypes.string,
 	handleInputChange: React.PropTypes.func.isRequired,
 	required: React.PropTypes.bool,
-	disabled: React.PropTypes.bool
+	disabled: React.PropTypes.bool,
+	inputMatch: React.PropTypes.string
 }

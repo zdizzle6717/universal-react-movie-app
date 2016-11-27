@@ -90,7 +90,7 @@ module.exports = [
     {
 		method: 'POST',
         path: '/api/files/{path}',
-        handler: api.files.create,
+        handler: api.files.upload,
         config: {
             payload: {
                 output: 'stream',
@@ -248,10 +248,14 @@ module.exports = [
                     year: Joi.number().required(),
                     genre: Joi.string(),
                     rating: Joi.number(),
-                    coverImg: Joi.string(),
                     synopsis: Joi.string(),
                     description: Joi.string(),
-                    DirectorId: Joi.number().required()
+                    DirectorId: Joi.number().required(),
+					File: Joi.object().keys({
+					    name: Joi.string().required(),
+					    type: Joi.string().required(),
+						size: Joi.number().required()
+					})
                 }
             },
             cors: {
@@ -276,10 +280,14 @@ module.exports = [
                     year: Joi.number().required(),
                     genre: Joi.string(),
                     rating: Joi.number(),
-					coverImg: Joi.string(),
                     synopsis: Joi.string(),
                     description: Joi.string(),
-                    DirectorId: Joi.number().required()
+                    DirectorId: Joi.number().required(),
+					File: Joi.object().keys({
+					    name: Joi.string().required(),
+					    type: Joi.string().required(),
+						size: Joi.number().required()
+					})
                 }
             },
             cors: {

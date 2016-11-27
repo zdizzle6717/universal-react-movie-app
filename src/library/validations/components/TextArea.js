@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import defaultValidations from '../constants/defaultValidations'
 import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
@@ -17,7 +18,8 @@ export default class TextArea extends React.Component {
 			initial: true,
 			valid: true,
 			touched: false,
-			pristine: true
+			pristine: true,
+			form: ''
         };
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -28,13 +30,17 @@ export default class TextArea extends React.Component {
     }
 
 	componentDidMount() {
+		let elem = ReactDOM.findDOMNode(this);
+		let formName = elem.closest('form').getAttribute('name');
 		let validity = this.props.required ? false : true;
 		this.setState({
-			valid: validity
+			valid: validity,
+			form: formName
 		});
 		let input = {
 			name: this.props.name,
 			value: this.props.value,
+			form: formName,
 			valid: validity
 		};
 		setTimeout(() => {
@@ -48,9 +54,11 @@ export default class TextArea extends React.Component {
 		}
 	}
 
+	// This will update validation in the case that an input is conditional visible
 	componentWillUnmount() {
 		let input = {
-			name: this.props.name
+			name: this.props.name,
+			form: this.state.form
 		}
 		setTimeout(() => {
 			FormActions.removeInput(input);
@@ -58,6 +66,8 @@ export default class TextArea extends React.Component {
 	}
 
 	validateInit(props) {
+		let elem = ReactDOM.findDOMNode(this);
+		let formName = elem.closest('form').getAttribute('name');
 		let validity = props.required ? (props.value ? true : false) : true;
 		this.setState({
 			initial: false,
@@ -67,6 +77,7 @@ export default class TextArea extends React.Component {
 			name: props.name,
 			value: props.value,
 			valid: validity,
+			form: formName,
 			initial: false
 		};
 		setTimeout(() => {
@@ -85,6 +96,7 @@ export default class TextArea extends React.Component {
 			name: e.target.name,
 			value: e.target.value,
 			valid: validity,
+			form: this.state.form,
 			initial: false
 		}
 		FormActions.addInput(input);

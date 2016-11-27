@@ -7,47 +7,50 @@ import { EventEmitter } from 'events';
 const CHANGE_EVENT = 'form:change';
 
 let _inputs = [];
-let _validity = false;
+let _validity = {};
 
 function setInput(input) {
+	if (!input.form) {
+		return;
+	}
 	let inputExists = false;
-	for (let i in _inputs) {
-		if (_inputs[i].name === input.name) {
+	for (let i = 0; i < _inputs.length; i++) {
+		if (_inputs[i].name === input.name && _inputs[i].form === input.form) {
 			inputExists = true;
 			_inputs[i] = input;
-			return setValidity();
+			return setValidity(input.form);
 		}
 	}
 	if (!inputExists) {
 		_inputs.push(input);
-		return setValidity();
+		return setValidity(input.form);
 	}
 }
 
 function removeInput(input) {
 	let showError = true;
-	for (let i in _inputs) {
-		if (_inputs[i].name === input.name) {
+	for (let i = 0; i < _inputs.length; i++) {
+		if (_inputs[i].name === input.name && _inputs[i].form === input.form) {
 			showError = false;
 			_inputs.splice(i, 1);
-			return setValidity();
+			return setValidity(input.form);
 		}
 	}
 	if (showError) {
-		throw 'Error: Failed to remove input on componentWillUnmount'
+		throw 'Error: Failed to remove input on componentWillUnmount (FormStore.js)'
 	}
 }
 
-function setValidity() {
-	_validity = true;
-	for (let i in _inputs) {
-		if (_inputs[i].valid === false) {
-			_validity = false;
-			return _validity;
+function setValidity(formName) {
+	_validity[formName] = true;
+	for (let i = 0; i < _inputs.length; i++) {
+		if (_inputs[i].valid === false && _inputs[i].form === formName) {
+			_validity[formName] = false;
+			return _validity[formName];
 		}
 	}
-	if (_validity) {
-		return _validity;
+	if (_validity[formName]) {
+		return _validity[formName];
 	}
 }
 
@@ -69,8 +72,13 @@ class FormStoreClass extends EventEmitter {
         return _inputs;
     }
 
-	getValidity() {
-		return _validity;
+	getValidity(formName) {
+		return _validity[formName];
+	}
+
+	reset() {
+		_inputs = [];
+		_validity = {};
 	}
 
 }

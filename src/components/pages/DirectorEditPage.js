@@ -108,32 +108,34 @@ export default class DirectorEditPage extends React.Component {
 	render() {
 		return (
 			<div className="row">
-				<h1>ReactJs, Hapi.js & PostgreSQL</h1>
-				<h3 className="push-bottom-2x">Dynamic Movie App:
-					<strong className="animate"> {this.state.newDirector ? 'Add New Director' : `Edit Director (ID: ${this.state.director.id})`}</strong>
-				</h3>
+				<div className="small-12 columns">
+					<h1>ReactJs, Hapi.js & PostgreSQL</h1>
+					<h3 className="push-bottom-2x">Dynamic Movie App:
+						<strong className="animate"> {this.state.newDirector ? 'Add New Director' : `Edit Director (ID: ${this.state.director.id || ''})`}</strong>
+					</h3>
 
-				<Form name="directorForm" submitText={this.state.newDirector ? 'Add New Director' : 'Update Director'} handleSubmit={this.handleSubmit}>
-					<div className="row">
-						<div className="medium-6 columns">
-							<label className="required">First Name
-								<Input type="text" name="firstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
-							</label>
+					<Form name="directorForm" submitText={this.state.newDirector ? 'Add New Director' : 'Update Director'} handleSubmit={this.handleSubmit}>
+						<div className="row">
+							<div className="medium-6 columns">
+								<label className="required">First Name
+									<Input type="text" name="firstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+								</label>
+							</div>
+							<div className="medium-6 columns">
+								<label className="required">Last Name
+									<Input type="text" name="lastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+								</label>
+							</div>
 						</div>
-						<div className="medium-6 columns">
-							<label className="required">Last Name
-								<Input type="text" name="lastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
-							</label>
+						<div className="row">
+							<div className="medium-12 columns">
+								<label className="required">Bio
+									<TextArea placeholder="" name="bio" value={this.state.director.bio} handleInputChange={this.handleInputChange} rows="2" required={true}/>
+								</label>
+							</div>
 						</div>
-					</div>
-					<div className="row">
-						<div className="medium-12 columns">
-							<label className="required">Bio
-								<TextArea placeholder="" name="bio" value={this.state.director.bio} handleInputChange={this.handleInputChange} rows="2" required={true}/>
-							</label>
-						</div>
-					</div>
-				</Form>
+					</Form>
+				</div>
 			</div>
 		);
 	}

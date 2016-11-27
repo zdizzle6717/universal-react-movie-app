@@ -28,10 +28,6 @@ export default class DirectorPage extends React.Component {
         DirectorStore.removeChangeListener(this.onChange);
     }
 
-    componentWillReceiveProps(nextProps) {
-        DirectorActions.getDirector(nextProps.params.id)
-    }
-
     onChange() {
         this.setState({
             director: DirectorStore.getDirector(this.props.params.directorId)
@@ -42,13 +38,15 @@ export default class DirectorPage extends React.Component {
   render() {
 	  return (
 			<div className="row">
-			    <h1>ReactJs, Hapi.js & PostgreSQL</h1>
-			    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{this.state.director.firstName} {this.state.director.lastName}</strong></h3>
-			    <h5>ID: {this.state.director.id}</h5>
-			    <label><u>Bio</u></label>
-			    <p className="text-justify">
-			        {this.state.director.bio}
-			    </p>
+				<div className="small-12 columns">
+					<h1>ReactJs, Hapi.js & PostgreSQL</h1>
+				    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{this.state.director.firstName} {this.state.director.lastName}</strong></h3>
+				    <h5>ID: {this.state.director.id}</h5>
+				    <label><u>Bio</u></label>
+				    <p className="text-justify">
+				        {this.state.director.bio}
+				    </p>
+				</div>
 			</div>
     	);
 	}

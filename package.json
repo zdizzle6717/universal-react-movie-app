@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/zdizzle6717/universal-react-movie-app#readme",
   "dependencies": {
+    "attr-accept": "^1.1.0",
     "axios": "^0.14.0",
     "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",

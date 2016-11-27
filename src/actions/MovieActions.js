@@ -35,6 +35,7 @@ export default {
                     actionType: MovieConstants.CREATE_MOVIE,
                     movie: movie
                 });
+				return movie;
             });
     },
 
@@ -46,6 +47,7 @@ export default {
                     actionType: MovieConstants.UPDATE_MOVIE,
                     movie: movie
                 });
+				return movie;
             });
     },
 

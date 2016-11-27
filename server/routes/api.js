@@ -45,13 +45,12 @@ let users = {
 
 // File Upload Route Configs
 let files = {
-    create: function(request, reply) {
+    upload: function(request, reply) {
         let data = request.payload;
         if (data.file) {
             let name = Date.now() + '-' + data.file.hapi.filename;
             let path = env.uploadPath + request.params.path + '/' + name;
             let file = fs.createWriteStream(path);
-
             file.on('error', function(err) {
                 console.error(err);
             });
@@ -163,7 +162,10 @@ let movies = {
                 where: {
                     id: req.params.id
                 },
-				include: [models.Director]
+				include: [
+					{model: models.Director},
+					{model: models.File},
+				]
             })
             .then(function(movie) {
                 if (movie) {
@@ -191,13 +193,33 @@ let movies = {
                 director: req.payload.director,
                 DirectorId: req.payload.DirectorId,
                 genre: req.payload.genre,
-                coverImg: req.payload.coverImg,
                 description: req.payload.description,
                 synopsis: req.payload.synopsis,
                 rating: req.payload.rating
             })
-            .then(function(movie) {
-                res(movie).code(200);
+			.then(function(movie) {
+		        models.File.create({
+						MovieId: movie.id,
+		                name: req.payload.File.name,
+		                type: req.payload.File.type,
+		                size: req.payload.File.size
+		            })
+					.then(function(movie) {
+						models.Movie.find({
+								where: {
+									id: movie.id
+								},
+								include: [
+									{model: models.Director},
+									{model: models.File},
+								]
+							}).then((movie) => {
+								res(movie).code(200);
+							});
+		            })
+		            .catch(function() {
+		                res().code(406);
+		            });
             })
             .catch(function() {
                 res().code(406);
@@ -211,20 +233,41 @@ let movies = {
             })
             .then(function(movie) {
                 if (movie) {
-                    movie.updateAttributes({
-                        title: req.payload.title,
-                        year: req.payload.year,
-                        DirectorId: req.payload.DirectorId,
-                        genre: req.payload.genre,
-                        coverImg: req.payload.coverImg,
-                        synopsis: req.payload.synopsis,
-                        description: req.payload.description,
-                        rating: req.payload.rating
-                    }).then(function(movie) {
-                        res(movie).code(200);
-                    }).catch(function() {
-                        res().code(406);
-                    });
+					models.File.find({
+			                where: {
+			                    MovieId: movie.id
+			                }
+			            }).then((file) => {
+							file.updateAttributes({
+									name: req.payload.File.name,
+									type: req.payload.File.type,
+									size: req.payload.File.size
+					            }).then(() => {
+									movie.updateAttributes({
+				                        title: req.payload.title,
+				                        year: req.payload.year,
+				                        DirectorId: req.payload.DirectorId,
+				                        genre: req.payload.genre,
+				                        synopsis: req.payload.synopsis,
+				                        description: req.payload.description,
+				                        rating: req.payload.rating
+				                    }).then(function(movie) {
+										models.Movie.find({
+								                where: {
+								                    id: movie.id
+								                },
+												include: [
+													{model: models.Director},
+													{model: models.File},
+												]
+								            }).then((movie) => {
+												res(movie).code(200);
+											})
+				                    }).catch(function() {
+				                        res().code(406);
+				                    });
+								})
+						})
                 }
                 else {
                     res().code(404);

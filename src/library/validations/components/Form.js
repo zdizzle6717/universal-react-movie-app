@@ -22,7 +22,7 @@ export default class Form extends React.Component {
 	}
 
 	componentDidMount() {
-
+		FormStore.reset();
 	}
 
 	componentWillUnmount() {
@@ -31,7 +31,7 @@ export default class Form extends React.Component {
 
 	onChange() {
 		this.setState({
-            valid: FormStore.getValidity()
+            valid: FormStore.getValidity(this.props.name)
         });
     }
 
@@ -45,7 +45,7 @@ export default class Form extends React.Component {
 			<form name={this.props.name}>
 				{this.props.children}
 				<div className="row">
-					<div className="form-group small-12 medium-6 columns">
+					<div className="form-group small-12 columns text-right">
 						<button className="button info" onClick={this.handleSubmit} disabled={!this.state.valid}>{this.props.submitText}</button>
 					</div>
 				</div>

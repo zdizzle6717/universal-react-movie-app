@@ -28,10 +28,6 @@ export default class MoviePage extends React.Component {
         MovieStore.removeChangeListener(this.onChange);
     }
 
-    componentWillReceiveProps(nextProps) {
-        MovieActions.getMovie(nextProps.params.id)
-    }
-
     onChange() {
         this.setState({
             movie: MovieStore.getMovie(this.props.params.movieId)
@@ -44,15 +40,16 @@ export default class MoviePage extends React.Component {
 	render() {
 	    return (
 			<div className="row">
-			    <h1>ReactJs, Hapi.js & PostgreSQL</h1>
-			    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{this.state.movie.title}</strong></h3>
-			    <h5>ID: {this.state.movie.id} | Director: {this.state.director.firstName} {this.state.director.lastName} | {this.state.movie.year} | {this.state.movie.genre} |
-			        {this.state.movie.rating}<i className="fa fa-star"></i>
-			    </h5>
+				<div className="small-12 columns">
+					<h1>ReactJs, Hapi.js & PostgreSQL</h1>
+				    <h3 className="push-bottom-2x">Dynamic Movie App: <strong>{this.state.movie.title}</strong></h3>
+				    <h5>ID: {this.state.movie.id} | Director: {this.state.director.firstName} {this.state.director.lastName} | {this.state.movie.year} | {this.state.movie.genre} | {this.state.movie.rating}<i className="fa fa-star"></i>
+				    </h5>
+				</div>
 				{
-					this.state.movie.coverImg ?
+					this.state.movie.File ?
 					<div className="medium-3 columns">
-						<a href={`/uploads/movies/${this.state.movie.coverImg}`} target="_blank"><img src={`/uploads/movies/${this.state.movie.coverImg}`}/></a>
+						<a href={`/uploads/movies/${this.state.movie.File.name}`} target="_blank"><img src={`/uploads/movies/${this.state.movie.File.name}`}/></a>
 					</div> :
 					null
 				}
