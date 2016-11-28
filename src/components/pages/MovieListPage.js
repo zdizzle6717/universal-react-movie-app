@@ -87,8 +87,8 @@ export default class MovieListPage extends React.Component {
 		let searchParam = e.target.value;
 		let movies = this.state.movies;
 		let newOrder = movies.sort(function(a, b) {
-			a = a[searchParam].toLowerCase();
-			b = b[searchParam].toLowerCase();
+			a = a[searchParam].toString().toLowerCase();
+			b = b[searchParam].toString().toLowerCase();
 		    if(a < b) return -1;
 		    if(a > b) return 1;
 		    return 0;

@@ -415,7 +415,7 @@ export default class FileUpload extends React.Component {
 			'file-list': true,
 			'show': this.state.showFileList
 		});
-		
+
 		return (
 			<div className="upload-container">
 				<div className={validationClasses}>
@@ -434,7 +434,7 @@ export default class FileUpload extends React.Component {
 							this.props.singleFile && !this.state.file.name && this.state.showFileList ?
 							<div className="help-text">Click above to browse for files or drag & drop files</div> :
 							<div className={fileListClasses}>
-								<table className="file-list-table">
+								<table className="file-list-table stack">
 		 							<thead>
 		 								<tr>
 		 									<th>File Name</th>
