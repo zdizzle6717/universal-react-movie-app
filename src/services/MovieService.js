@@ -21,6 +21,7 @@ export default {
 	},
 	updateMovie: (id, data) => {
 		data = cleanData(data);
+		data.File = cleanData(data.File);
 		return axios.put(BaseUrl + 'movies/' + id, data).then((response) => {
 			return response.data;
 		})
@@ -35,6 +36,7 @@ export default {
 function cleanData(data) {
 	delete data.id;
 	delete data.Director
+	delete data.MovieId
 	delete data.createdAt
 	delete data.updatedAt
 

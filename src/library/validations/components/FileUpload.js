@@ -56,7 +56,7 @@ export default class FileUpload extends React.Component {
 			if (this.props.required > this.state.maxFiles) {
 				throw new Error(' Oops! Total required files must be less than the max total files allows. (FileUpload.js)');
 			}
-			let validity = false
+			validity = false
 		}
 		this.setState({
 			valid: validity,
@@ -189,11 +189,17 @@ export default class FileUpload extends React.Component {
 			if (!this.state.showFileList) {
 				this.toggleFileList();
 			}
-			this.updateErrorMessages('remove', 'filesRequired', null);
+			let validity = this.props.required ? newFile.name : true;
+			if (!validity) {
+				let message = 'This is a required field.';
+				this.updateErrorMessages('add', 'filesRequired', message);
+			} else {
+				this.updateErrorMessages('remove', 'filesRequired', null);
+			}
 			let input = {
 				name: e.target.name,
 				value: newFile,
-				valid: true,
+				valid: validity,
 				form: this.state.form,
 				initial: false
 			}
@@ -201,7 +207,7 @@ export default class FileUpload extends React.Component {
 			this.setState({
 				name: this.props.name,
 				file: newFile,
-				valid: true,
+				valid: validity,
 				pristine: false
 			})
 		} else {
@@ -283,7 +289,6 @@ export default class FileUpload extends React.Component {
 				pristine: false
 			});
 		}
-
 	}
 
 	updateErrorMessages(action, key, text) {
@@ -410,7 +415,7 @@ export default class FileUpload extends React.Component {
 			'file-list': true,
 			'show': this.state.showFileList
 		});
-
+		
 		return (
 			<div className="upload-container">
 				<div className={validationClasses}>
@@ -425,8 +430,8 @@ export default class FileUpload extends React.Component {
 							{ this.state.showFileList ? <span className="fa fa-minus"></span> : <span className="fa fa-plus"></span>} { this.state.showFileList ? 'Hide File List' : 'Show File List'}
 						</button>
 						{
-							this.state.files.length < 1 && this.state.showFileList && !this.props.singleFile ||
-							!this.state.file.name && this.state.showFileList ?
+							!this.props.singleFile &&this.state.files.length < 1 && this.state.showFileList ||
+							this.props.singleFile && !this.state.file.name && this.state.showFileList ?
 							<div className="help-text">Click above to browse for files or drag & drop files</div> :
 							<div className={fileListClasses}>
 								<table className="file-list-table">

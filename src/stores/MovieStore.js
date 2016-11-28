@@ -11,6 +11,7 @@ let _movies = [];
 
 function setMovie(movie) {
 	_movie = movie;
+	return _movie;
 }
 
 function setMovies(movies) {

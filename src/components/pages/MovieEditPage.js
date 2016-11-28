@@ -25,6 +25,7 @@ export default class MoviePage extends React.Component {
 		this.onDirectorsChange = this.onDirectorsChange.bind(this);
 		this.toggleNewDirector = this.toggleNewDirector.bind(this);
 		this.handleInputChange = this.handleInputChange.bind(this);
+		this.handleDirectorInputChange = this.handleDirectorInputChange.bind(this);
 		this.handleDirectorChange = this.handleDirectorChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleFileUpload = this.handleFileUpload.bind(this);
@@ -71,9 +72,18 @@ export default class MoviePage extends React.Component {
 
 	toggleNewDirector(e) {
 		e.preventDefault();
-		this.setState({
-			showNewDirector: !this.state.showNewDirector
-		})
+		if (this.state.showNewDirector) {
+			this.setState({
+				showNewDirector: !this.state.showNewDirector
+			})
+		} else {
+			let movie = this.state.movie;
+			movie.DirectorId = '';
+			this.setState({
+				showNewDirector: !this.state.showNewDirector,
+				movie: movie
+			})
+		}
 	}
 
 	handleInputChange(e) {
@@ -81,6 +91,14 @@ export default class MoviePage extends React.Component {
 		movie[e.target.name] = e.target.value;
 		this.setState({
 			movie: movie
+		})
+	}
+
+	handleDirectorInputChange(e) {
+		let director = this.state.director;
+		director[e.target.name] = e.target.value;
+		this.setState({
+			director: director
 		})
 	}
 
@@ -108,8 +126,8 @@ export default class MoviePage extends React.Component {
 				movie.File.name = response.data.filename;
 			}).then(() => {
 				if (this.state.showNewDirector) {
-					DirectorActions.createDirector(director).then((response) => {
-						movie.DirectorId = response.id;
+					DirectorActions.createDirector(director).then(() => {
+						movie.DirectorId = DirectorStore.getDirector().id;
 						saveMovie(movie, newMovie);
 					});
 				} else {
@@ -118,8 +136,8 @@ export default class MoviePage extends React.Component {
 			})
 		} else {
 			if (this.state.showNewDirector) {
-				DirectorActions.createDirector(director).then((response) => {
-					movie.DirectorId = response.id;
+				DirectorActions.createDirector(director).then(() => {
+					movie.DirectorId = DirectorStore.getDirector().id;
 					saveMovie(movie, newMovie);
 				});
 			} else {
@@ -144,8 +162,9 @@ export default class MoviePage extends React.Component {
 
 	handleFileUpload(file) {
 		let movie = this.state.movie;
+		console.log(file);
 		movie.File = {
-			name: file.filename,
+			name: file.name,
 			size: file.size,
 			type: file.type
 		}
@@ -243,19 +262,19 @@ export default class MoviePage extends React.Component {
 									<div className="row">
 										<div className="medium-6 columns">
 											<label className="required">First Name
-												<Input type="text" name="directorfirstName" value={this.state.director.firstName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+												<Input type="text" name="firstName" value={this.state.director.firstName} handleInputChange={this.handleDirectorInputChange} validate="name" required={true}/>
 											</label>
 										</div>
 										<div className="medium-6 columns">
 											<label className="required">Last Name
-												<Input type="text" name="directorlastName" value={this.state.director.lastName} handleInputChange={this.handleInputChange} validate="name" required={true}/>
+												<Input type="text" name="lastName" value={this.state.director.lastName} handleInputChange={this.handleDirectorInputChange} validate="name" required={true}/>
 											</label>
 										</div>
 									</div>
 									<div className="row">
 										<div className="medium-12 columns">
 											<label className="required">Bio
-												<TextArea name="directorBio" value={this.state.director.bio} handleInputChange={this.handleInputChange} placeholder="Enter a director biography..." rows="2" required={true}/>
+												<TextArea name="bio" value={this.state.director.bio} handleInputChange={this.handleDirectorInputChange} placeholder="Enter a director biography..." rows="2" required={true}/>
 											</label>
 										</div>
 									</div>

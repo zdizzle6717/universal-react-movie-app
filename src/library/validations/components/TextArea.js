@@ -49,12 +49,13 @@ export default class TextArea extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (this.state.initial && this.state.pristine && nextProps.value) {
+		// Accounts for initial data check and conditionally required inputs
+		if (this.state.initial && this.state.pristine && nextProps.value || this.props.required !== nextProps.required) {
 			this.validateInit(nextProps);
 		}
 	}
 
-	// This will update validation in the case that an input is conditional visible
+	// This will update validation in the case that an input is conditionally visible
 	componentWillUnmount() {
 		let input = {
 			name: this.props.name,
