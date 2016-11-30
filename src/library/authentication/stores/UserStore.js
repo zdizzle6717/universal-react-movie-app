@@ -1,13 +1,14 @@
 import AppDispatcher from '../../../dispatcher';
 import UserConstants from '../constants/UserConstants';
 import { EventEmitter } from 'events';
+import rolesConfig from '../../../constants/rolesConfig';
 
 const CHANGE_EVENT = 'user:change';
 
 let _users = [];
 let _user = {};
 let _isAuthenticated = false;
-let _previousRoute = null;
+let _redirectRoute = '/';
 
 function setUsers(users) {
 	if (users) {
@@ -17,6 +18,14 @@ function setUsers(users) {
 
 function setUser(user) {
 	if (user) {
+		rolesConfig.forEach((role) => {
+			if (role.roleFlags === user.roleFlags) {
+				user.roleConfig = role;
+			}
+		});
+		if (!user.roleConfig) {
+			throw new Error('Oops! Make sure that the rolesConfig on the UI and API have matching values.');
+		}
 		_user = user;
 		_isAuthenticated = true;
 		sessionStorage.setItem('user', JSON.stringify(user));
@@ -54,12 +63,12 @@ class UserStoreClass extends EventEmitter {
         this.removeListener(CHANGE_EVENT, callback);
     }
 
-	setPreviousRoute(route) {
-		_previousRoute = route;
+	setRedirectRoute(route) {
+		_redirectRoute = route;
 	}
 
-	getPreviousRoute() {
-		return _previousRoute;
+	getRedirectRoute() {
+		return _redirectRoute;
 	}
 
     getUsers() {
@@ -72,6 +81,29 @@ class UserStoreClass extends EventEmitter {
 
 	checkAuthentication() {
 		return _isAuthenticated;
+	}
+
+	checkAuthorization(accessControl) {
+		let userFlags = _user.roleFlags || 0;
+		let accessFlags = 0;
+		accessControl.forEach((roleName) => {
+			rolesConfig.forEach((config) => {
+				if (config.name === roleName) {
+					accessFlags += config.roleFlags;
+				}
+			});
+		});
+
+		let hasFlags = function (flags, mask) {
+			flags = parseInt(flags, 10);
+			mask = parseInt(mask, 10);
+
+			return (mask & flags) === mask;
+		};
+
+		let accessGranted = hasFlags(accessFlags, userFlags) && userFlags !== 0;
+
+		return accessGranted;
 	}
 
 }
