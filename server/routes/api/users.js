@@ -24,7 +24,8 @@ module.exports = [
 				payload: {
 					username: Joi.string().alphanum().min(2).max(300).required(),
 					email: Joi.string().email().required(),
-					password: Joi.string().required()
+					password: Joi.string().required(),
+					role: Joi.string().required()
 				}
 			},
 			cors: {

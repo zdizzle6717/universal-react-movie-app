@@ -3,6 +3,7 @@
 const Boom = require('boom');
 const bcrypt = require('bcrypt');
 const models = require('../models');
+const rolesConfig = require('../config/rolesConfig');
 
 function verifyUniqueUser(req, res) {
     models.User.find({
@@ -69,8 +70,20 @@ function verifyCredentials(req, res) {
         });
 }
 
+function getUserRoleFlags(user) {
+	let userRoleFlags = 0;
+	rolesConfig.forEach((role) => {
+		if (user[role.name]) {
+			userRoleFlags += role.roleFlags;
+		}
+	});
+
+	return userRoleFlags;
+}
+
 module.exports = {
     verifyUniqueUser,
     verifyCredentials,
-    hashPassword
+    hashPassword,
+	getUserRoleFlags
 }

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/envVariables');
 const rolesConfig = require('../config/rolesConfig');
 
-function createUserToken(user) {
+function createToken(user) {
   let scopes = [];
   rolesConfig.forEach((role) => {
 	  if (user[role.name]) {
@@ -16,4 +16,4 @@ function createUserToken(user) {
   return jwt.sign({ id: user._id, username: user.username, scope: scopes }, env.secret, { algorithm: 'HS256', expiresIn: "1h" } );
 }
 
-module.exports = createUserToken;
+module.exports = createToken;

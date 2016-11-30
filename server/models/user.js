@@ -11,10 +11,18 @@ module.exports = function(sequelize, DataTypes) {
 		unique: true
 	},
     password: DataTypes.STRING,
-    admin: {
+    siteAdmin: {
 		type: DataTypes.BOOLEAN,
-		defaultValue: true
-	}
+		defaultValue: false
+	},
+    movieAdmin: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false
+	},
+    directorAdmin: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false
+	},
   }, {
     classMethods: {
     }
