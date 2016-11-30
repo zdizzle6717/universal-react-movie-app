@@ -1,6 +1,8 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 import Layout from './components/Layout';
+import LoginPage from './components/pages/LoginPage';
+import RegistrationPage from './components/pages/RegistrationPage';
 import IndexPage from './components/pages/IndexPage';
 import MoviePage from './components/pages/MoviePage';
 import MovieListPage from './components/pages/MovieListPage';
@@ -13,6 +15,8 @@ import NotFoundPage from './components/pages/NotFoundPage';
 const routes = (
   <Route path="/" component={Layout}>
     <IndexRoute component={IndexPage}/>
+    <Route path="login" component={LoginPage}/>
+    <Route path="register" component={RegistrationPage}/>
     <Route path="movies" component={MovieListPage}/>
     <Route path="movies/view/:movieId" component={MoviePage}/>
     <Route path="movies/create" component={MovieEditPage}/>

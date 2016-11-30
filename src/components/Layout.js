@@ -7,10 +7,15 @@ import TopNav from './pieces/TopNav';
 import Alerts from '../library/alerts'
 import { Loader, LoaderActions, LoaderStore } from '../library/loader';
 import Animation from 'react-addons-css-transition-group';
+import UserStore from '../library/authentication/stores/UserStore';
+import UserActions from '../library/authentication/actions/UserActions';
 
 let timer;
 let numLoadings = 0;
 let _timeout = 350;
+
+// Global axios config
+axios.defaults.baseURL = 'http://www.react.zackanselm.com:8080/api/';
 
 // Global axios interceptor
 axios.interceptors.request.use(function (config) {
@@ -34,13 +39,17 @@ axios.interceptors.response.use(function (response) {
 	numLoadings--;
     return response;
 }, (error) => {
-	if (numLoadings === 0) { return error; }
+	if (numLoadings === 0) {
+		return error.response;
+	}
 
 	if (numLoadings < 2) {
 		clearTimeout(timer);
 		LoaderActions.hideLoader();
 	}
 	numLoadings--;
+
+	return Promise.reject(error.response.data);
 });
 
 export default class Layout extends React.Component {
@@ -56,6 +65,12 @@ export default class Layout extends React.Component {
 
 	componentWillMount() {
         LoaderStore.addChangeListener(this.onChange);
+		if (typeof sessionStorage !== 'undefined') {
+			let storedUser = JSON.parse(sessionStorage.getItem('user'));
+			if (storedUser) {
+				UserActions.setUser(storedUser);
+			}
+		}
     }
 
 	componentWillUnmount() {

@@ -1,32 +1,31 @@
 'use strict';
 
-import BaseUrl from '../baseUrl';
 import axios from 'axios';
 
 export default {
 	getDirector: (id) => {
-		return axios.get(BaseUrl + 'directors/' + id).then((response) => {
+		return axios.get('directors/' + id).then((response) => {
 			return response.data;
 		})
 	},
 	getDirectors: () => {
-		return axios.get(BaseUrl + 'directors').then((response) => {
+		return axios.get('directors').then((response) => {
 			return response.data;
 		})
 	},
 	createDirector: (data) => {
-		return axios.post(BaseUrl + 'directors', data).then((response) => {
+		return axios.post('directors', data).then((response) => {
 			return response.data;
 		})
 	},
 	updateDirector: (id, data) => {
 		data = cleanData(data);
-		return axios.put(BaseUrl + 'directors/' + id, data).then((response) => {
+		return axios.put('directors/' + id, data).then((response) => {
 			return response.data;
 		})
 	},
 	removeDirector: (id) => {
-		return axios.delete(BaseUrl + 'directors/' + id).then((response) => {
+		return axios.delete('directors/' + id).then((response) => {
 			return response.data;
 		})
 	},

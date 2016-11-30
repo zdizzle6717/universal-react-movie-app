@@ -48,8 +48,8 @@ export default class TextArea extends React.Component {
 		});
 	}
 
+	// Accounts for initial data check and conditionally required inputs
 	componentWillReceiveProps(nextProps) {
-		// Accounts for initial data check and conditionally required inputs
 		if (this.state.initial && this.state.pristine && nextProps.value || this.props.required !== nextProps.required) {
 			this.validateInit(nextProps);
 		}

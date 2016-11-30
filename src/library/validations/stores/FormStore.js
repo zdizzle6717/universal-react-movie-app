@@ -36,9 +36,6 @@ function removeInput(input) {
 			return setValidity(input.form);
 		}
 	}
-	if (showError) {
-		throw 'Error: Failed to remove input on componentWillUnmount (FormStore.js)'
-	}
 }
 
 function setValidity(formName) {

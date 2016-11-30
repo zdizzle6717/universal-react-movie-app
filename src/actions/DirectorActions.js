@@ -13,6 +13,7 @@ export default {
                     actionType: DirectorConstants.GET_DIRECTORS,
                     directors: directors
                 });
+				return directors;
             });
     },
 
@@ -24,6 +25,7 @@ export default {
                     actionType: DirectorConstants.GET_DIRECTOR,
                     director: director
                 });
+				return director;
             });
     },
 
@@ -35,6 +37,7 @@ export default {
                     actionType: DirectorConstants.CREATE_DIRECTOR,
                     director: director
                 });
+				return director;
             });
     },
 
@@ -46,6 +49,7 @@ export default {
                     actionType: DirectorConstants.UPDATE_DIRECTOR,
                     director: director
                 });
+				return director;
             });
     },
 
@@ -57,6 +61,7 @@ export default {
                     actionType: DirectorConstants.REMOVE_DIRECTOR,
                     id: id
                 });
+				return director;
             });
     }
 };

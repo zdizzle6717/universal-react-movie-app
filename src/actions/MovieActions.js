@@ -13,6 +13,7 @@ export default {
                     actionType: MovieConstants.GET_MOVIE,
                     movie: movie
                 });
+				return movie;
             });
     },
 
@@ -24,6 +25,7 @@ export default {
                     actionType: MovieConstants.GET_MOVIES,
                     movies: movies
                 });
+				return movies;
             });
     },
 
@@ -35,6 +37,7 @@ export default {
                     actionType: MovieConstants.CREATE_MOVIE,
                     movie: movie
                 });
+				return movie;
             });
     },
 
@@ -46,6 +49,7 @@ export default {
                     actionType: MovieConstants.UPDATE_MOVIE,
                     movie: movie
                 });
+				return movie;
             });
     },
 
@@ -57,6 +61,7 @@ export default {
                     actionType: MovieConstants.REMOVE_MOVIE,
                     id: id
                 });
+				return movie;
             });
     }
 }

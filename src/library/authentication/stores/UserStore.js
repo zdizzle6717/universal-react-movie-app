@@ -6,6 +6,8 @@ const CHANGE_EVENT = 'user:change';
 
 let _users = [];
 let _user = {};
+let _isAuthenticated = false;
+let _previousRoute = null;
 
 function setUsers(users) {
 	if (users) {
@@ -16,7 +18,17 @@ function setUsers(users) {
 function setUser(user) {
 	if (user) {
 		_user = user;
+		_isAuthenticated = true;
+		sessionStorage.setItem('user', JSON.stringify(user));
+		console.log('Auth credentials changed.');
 	}
+}
+
+function logoutUser() {
+	_user = {};
+	_isAuthenticated = false;
+	sessionStorage.removeItem('user');
+	return _isAuthenticated;
 }
 
 function removeUser(id) {
@@ -42,6 +54,14 @@ class UserStoreClass extends EventEmitter {
         this.removeListener(CHANGE_EVENT, callback);
     }
 
+	setPreviousRoute(route) {
+		_previousRoute = route;
+	}
+
+	getPreviousRoute() {
+		return _previousRoute;
+	}
+
     getUsers() {
         return _users;
     }
@@ -49,6 +69,10 @@ class UserStoreClass extends EventEmitter {
     getUser() {
         return _user;
     }
+
+	checkAuthentication() {
+		return _isAuthenticated;
+	}
 
 }
 
@@ -64,6 +88,16 @@ UserStore.dispatchToken = AppDispatcher.register(action => {
 
 		case UserConstants.AUTHENTICATE_USER:
             setUser(action.user);
+            UserStore.emitChange();
+            break;
+
+		case UserConstants.SET_USER:
+            setUser(action.user);
+            UserStore.emitChange();
+            break;
+
+		case UserConstants.LOGOUT_USER:
+            logoutUser();
             UserStore.emitChange();
             break;
 

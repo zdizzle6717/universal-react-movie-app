@@ -73,8 +73,10 @@ export default class FileUpload extends React.Component {
 		});
 	}
 
+	// Accounts for initial data check and conditionally required inputs
 	componentWillReceiveProps(nextProps) {
-		if (this.state.initial && this.state.pristine && nextProps.value) {
+		let initialValue = this.props.singleFile ? (nextProps.value ? nextProps.value.name : false) : (nextProps.value ? nextProps.value[0] : false);
+		if (this.state.initial && this.state.pristine && initialValue) {
 			this.validateInit(nextProps);
 		}
 	}
@@ -91,14 +93,12 @@ export default class FileUpload extends React.Component {
 	}
 
 	// This checks the validation of any input containing data on first render
-	// TODO: Set state to the current files already in the model
 	validateInit(props) {
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('form').getAttribute('name');
 		let validity;
 		if (this.props.singleFile) {
-			// TODO: Set 'file' to an object with the current file
-			let file = props.value ? props.value : {};
+			let file = props.value || {};
 			let validity = props.required ? !!file : true;
 			this.setState({
 				name: props.name,
@@ -107,7 +107,6 @@ export default class FileUpload extends React.Component {
 				initial: false
 			});
 		} else {
-			// TODO: Set 'files' to an array of objects with the current files
 			let files = props.value || [];
 			let validity = props.required ? (files.length >= props.required ? true : false) : true;
 			this.setState({
@@ -434,7 +433,7 @@ export default class FileUpload extends React.Component {
 							this.props.singleFile && !this.state.file.name && this.state.showFileList ?
 							<div className="help-text">Click above to browse for files or drag & drop files</div> :
 							<div className={fileListClasses}>
-								<table className="file-list-table stack">
+								<table className="file-list-table">
 		 							<thead>
 		 								<tr>
 		 									<th>File Name</th>
@@ -454,7 +453,7 @@ export default class FileUpload extends React.Component {
 			 								</tr>
 			 							</tbody> :
 										<tbody>
- 			 								{this.state.files.map((file, i) => <tr key={i} {...file} >
+ 			 								{this.state.files.map((file, i) => <tr key={i} name="file.name">
  			 									<td>{file.name}</td>
  			 									<td>{file.type}</td>
  			 									<td>{(file.size / Math.pow(1024, 2)).toFixed(2)}MB</td>

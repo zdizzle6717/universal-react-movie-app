@@ -41,7 +41,7 @@
 input.touched.invalid:not(.focused),
 input.blurred.invalid,
 input.dirty.invalid {
-	border: 1px solid $alert-600;
+	border: 1px solid $alert-500;
 
 	& ~ .validate-errors {
 		display: flex;
@@ -91,9 +91,6 @@ input.dirty.invalid {
 
 select.touched.invalid:not(.focused),
 select.blurred.invalid,
-select.dirty.invalid,
-textarea.touched.invalid:not(.focused),
-textarea.blurred.invalid,
-textarea.dirty.invalid {
-	border: 1px solid $alert-600;
+select.dirty.invalid {
+	border: 1px solid $alert-500;
 }

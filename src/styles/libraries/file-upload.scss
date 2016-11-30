@@ -15,7 +15,6 @@
 		}
 
 		.file-count {
-			cursor: pointer;
 			position: absolute;
 		    right: 5px;
 		    font-size: .8rem;
@@ -67,6 +66,7 @@
 				@include box-shadow(2);
 				display: none;
 				background: $white;
+				border: 1px solid rgba(0, 0, 0, 0.2);
 				width: auto;
 			    max-width: 400px;
 			    position: fixed;
@@ -79,12 +79,10 @@
 					width: 100%;
 					max-width: none;
 					left: 0;
-					overflow-y: auto;
 				}
 
-
 				&.show {
-					display: initial;
+					display: table;
 				}
 
 				.remove-file-header {
@@ -97,7 +95,6 @@
 
 					.fa {
 						color: $alert-500;
-						font-size: .9rem;
 						width: 24px;
 						height: 24px;
 						border-radius: 20px;
@@ -121,11 +118,6 @@
 
 				table {
 					margin: 0;
-					word-break: break-word;
-
-					tr {
-						word-break: normal;
-					}
 				}
 			}
 		}

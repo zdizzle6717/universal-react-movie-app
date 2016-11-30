@@ -68,7 +68,10 @@ module.exports = [
 				    password: Joi.string().required()
 				  })
 				)
-			}
+			},
+			cors: {
+                origin: ['*']
+            }
 		}
 	},
 	{

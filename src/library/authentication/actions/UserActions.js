@@ -22,11 +22,24 @@ export default {
             .authenticate(data)
             .then(user => {
                 AppDispatcher.dispatch({
-                    actionType: UserConstants.AUTHENTCIATE_USER,
+                    actionType: UserConstants.AUTHENTICATE_USER,
                     user: user
                 });
 				return user;
             });
+    },
+
+	setUser: (data) => {
+		AppDispatcher.dispatch({
+			actionType: UserConstants.SET_USER,
+			user: data
+		});
+    },
+
+	logout: () => {
+		AppDispatcher.dispatch({
+			actionType: UserConstants.LOGOUT_USER
+		});
     },
 
 	get: (id) => {
@@ -36,6 +49,7 @@ export default {
 					actionType: UserConstants.GET_USER,
 					user: user
 				});
+				return user;
             });
     },
 
@@ -47,6 +61,7 @@ export default {
                     actionType: UserConstants.GET_USERS,
                     users: users
                 });
+				return users;
             });
     },
 
@@ -58,6 +73,7 @@ export default {
                     actionType: UserConstants.UPDATE_USER,
                     user: user
                 });
+				return user;
             });
     },
 
@@ -69,6 +85,7 @@ export default {
                     actionType: UserConstants.REMOVE_USER,
                     id: id
                 });
+				return user;
             });
     }
 }

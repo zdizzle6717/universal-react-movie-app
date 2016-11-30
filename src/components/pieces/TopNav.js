@@ -2,18 +2,42 @@
 
 import React from 'react';
 import classNames from 'classnames';
-import { Link } from 'react-router';
+import AlertActions from '../../library/alerts/actions/AlertActions';
+import { Link, browserHistory } from 'react-router';
+import UserStore from '../../library/authentication/stores/UserStore';
+import UserActions from '../../library/authentication/actions/UserActions';
 
 export default class TopNav extends React.Component {
 	constructor() {
 		super();
 
 		this.state = {
+			authenticated: false,
 			showMobileMenu: false
 		}
 
+		this.onUserChange = this.onUserChange.bind(this);
 		this.toggleMenu = this.toggleMenu.bind(this);
 		this.closeMenu = this.closeMenu.bind(this);
+		this.showAlert = this.showAlert.bind(this);
+		this.logout = this.logout.bind(this);
+	}
+
+	componentWillMount() {
+		this.setState({
+			authenticated: UserStore.checkAuthentication()
+		});
+		UserStore.addChangeListener(this.onUserChange);
+	}
+
+	componentWillUnmount() {
+		UserStore.removeChangeListener(this.onUserChange);
+	}
+
+	onUserChange() {
+		this.setState({
+			authenticated: UserStore.checkAuthentication()
+		});
 	}
 
 	toggleMenu() {
@@ -26,6 +50,31 @@ export default class TopNav extends React.Component {
 		this.setState({
 			showMobileMenu: false
 		});
+	}
+
+	logout() {
+		UserActions.logout();
+		this.setState({
+			authenticated: false
+		})
+		this.showAlert('logoutSuccess')
+		browserHistory.push('/');
+	}
+
+	showAlert(selector) {
+		const alerts = {
+			'logoutSuccess': () => {
+				AlertActions.addAlert({
+					show: true,
+					title: 'Logout Success',
+					message: 'You have been successfully logged out.',
+					type: 'success',
+					delay: 3000
+				});
+			}
+		}
+
+		return alerts[selector]();
 	}
 
 	render() {
@@ -63,9 +112,15 @@ export default class TopNav extends React.Component {
 						</li>
 					</ul>
 					<ul className="login-menu">
-						<li className="login-link">
-							<Link key="login" to="/login" className="menu-link" activeClassName="active">Login/Register</Link>
-						</li>
+						{
+							this.state.authenticated ?
+							<li className="login-link">
+								<a className="menu-link" onClick={this.logout}>Logout</a>
+							</li> :
+							<li className="login-link">
+								<Link key="login" to="/login" className="menu-link" activeClassName="active">Login/Register</Link>
+							</li>
+						}
 					</ul>
 				</div>
 				<div className={backdropClasses} onClick={this.closeMenu}></div>
