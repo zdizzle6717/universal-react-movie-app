@@ -52,6 +52,10 @@ module.exports = [
                     bio: Joi.string().required()
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['directorAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }
@@ -75,6 +79,10 @@ module.exports = [
                     bio: Joi.string().required()
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['directorAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }
@@ -93,6 +101,10 @@ module.exports = [
                     id: Joi.number().required()
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['directorAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }

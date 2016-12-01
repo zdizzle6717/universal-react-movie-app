@@ -35,11 +35,12 @@ export default class LoginPage extends React.Component {
 
 	handleSubmit(e) {
 		UserActions.authenticate(this.state.credentials).then((response) => {
+			let homeState = UserStore.getUser().roleConfig.homeState;
 			this.showAlert('loginSuccess');
-			if (UserStore.getPreviousRoute()) {
-				browserHistory.push(UserStore.getPreviousRoute());
+			if (UserStore.getRedirectRoute()) {
+				browserHistory.push(UserStore.getRedirectRoute());
 			} else {
-				browserHistory.push('/movies');
+				browserHistory.push(homeState);
 			}
 		}).catch((error) => {
 			if (error.message === 'Incorrect password!') {
@@ -88,15 +89,14 @@ export default class LoginPage extends React.Component {
     render() {
         return (
 			<div className="row">
-				<div className="small-12 columns">
-					<h1 className="push-bottom-2x">Login</h1>
-					<hr />
-				</div>
+				<h1 className="push-bottom-2x">Login</h1>
+				<hr />
 				<div className="small-12 medium-6 medium-offset-3 large-4 large-offset-4 columns">
 					<Form name="loginForm" submitText="Login" handleSubmit={this.handleSubmit}>
 						<div className="row">
-							<div className="form-group small-12 columns text-center">
-								<h6><strong>Username:</strong> test@email.com | <strong>Password:</strong> Password# </h6>
+							<div className="form-group small-12 columns text-center push-bottom">
+								<h6><strong>Demo Users:</strong> siteAdmin@email.com | movieAdmin@email.com | directorAdmin@email.com</h6>
+								<h6><strong>Password:</strong> Password#</h6>
 							</div>
 						</div>
 						<div className="row">

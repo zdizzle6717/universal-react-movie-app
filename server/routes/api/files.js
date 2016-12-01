@@ -20,6 +20,10 @@ module.exports = [
             tags: ['api'],
             description: 'Upload a new file',
             notes: 'Upload a new file',
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['movieAdmin', 'siteAdmin']
+			},
 			cors: {
                 origin: ['*']
             }

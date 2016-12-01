@@ -19,7 +19,7 @@ let users = {
 					password: hash,
 					siteAdmin: siteAdmin,
 					movieAdmin: movieAdmin,
-					contactAdmin: contactAdmin
+					directorAdmin: directorAdmin
 	            })
 				.then(function(user) {
 					res({
@@ -27,7 +27,7 @@ let users = {
 						email: user.email,
 						username: user.username,
 						roleFlags: userFunctions.getUserRoleFlags(user),
-						id_token: createToken(user)
+						id_token: createUserToken(user)
 					}).code(201);
 				})
 				.catch(function(response) {
@@ -41,7 +41,7 @@ let users = {
 			email: req.pre.user.email,
 			username: req.pre.user.username,
 			roleFlags: userFunctions.getUserRoleFlags(req.pre.user),
-			id_token: createToken(req.pre.user)
+			id_token: createUserToken(req.pre.user)
 		}).code(201);
 	},
 	getAll: function(req, res) {

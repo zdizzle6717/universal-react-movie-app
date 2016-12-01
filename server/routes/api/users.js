@@ -73,7 +73,7 @@ module.exports = [
             notes: 'Get all users',
 			auth: {
 		      strategy: 'jsonWebToken',
-		      scope: ['admin']
+		      scope: ['siteAdmin']
 		    }
 		}
 	}

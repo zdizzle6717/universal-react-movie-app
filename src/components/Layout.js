@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import axios from 'axios';
+import AlertActions from '../library/alerts/actions/AlertActions';
 import TopNav from './pieces/TopNav';
 import Alerts from '../library/alerts'
 import { Loader, LoaderActions, LoaderStore } from '../library/loader';
@@ -20,6 +21,12 @@ axios.defaults.baseURL = 'http://www.react.zackanselm.com:8080/api/';
 // Global axios interceptor
 axios.interceptors.request.use(function (config) {
 	numLoadings++;
+
+	let token = UserStore.getUser().id_token;
+
+	if (token) {
+	    config.headers.authorization = 'Bearer ' + token;
+	}
 
 	if (numLoadings < 2) {
 		timer = setTimeout(() => {
@@ -39,6 +46,17 @@ axios.interceptors.response.use(function (response) {
 	numLoadings--;
     return response;
 }, (error) => {
+	if (error.response.data.statusCode === 401) {
+		AlertActions.addAlert({
+			show: true,
+			title: 'Not Authenticated',
+			message: 'Please login or register to continue.',
+			type: 'info',
+			delay: 3000
+		});
+		UserStore.setRedirectRoute(location.pathname);
+		browserHistory.push('/login');
+	}
 	if (numLoadings === 0) {
 		return error.response;
 	}

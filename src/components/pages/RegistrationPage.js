@@ -5,6 +5,7 @@ import { Link, browserHistory } from 'react-router';
 import AlertActions from '../../library/alerts/actions/AlertActions';
 import { Form, Input, Select, FileUpload } from '../../library/validations'
 import UserActions from '../../library/authentication/actions/UserActions';
+import UserStore from '../../library/authentication/stores/UserStore';
 
 export default class RegistrationPage extends React.Component {
     constructor() {
@@ -41,8 +42,9 @@ export default class RegistrationPage extends React.Component {
 
 	handleSubmit(e) {
 		UserActions.create(this.state.credentials).then((response) => {
+			let homeState = UserStore.getUser().roleConfig.homeState;
 			this.showAlert('registrationSuccess');
-			browserHistory.push('/movies');
+			browserHistory.push(homeState);
 		}).catch((error) => {
 			if (error.message === 'Username taken') {
 				this.showAlert('invalidUsername');
@@ -90,10 +92,8 @@ export default class RegistrationPage extends React.Component {
     render() {
         return (
 			<div className="row">
-				<div className="small-12 columns">
-					<h1 className="push-bottom-2x">Register</h1>
-					<hr />
-				</div>
+				<h1 className="push-bottom-2x">Register</h1>
+				<hr />
 				<div className="small-12 medium-6 medium-offset-3 large-4 large-offset-4 columns">
 					<Form name="registrationForm" submitText="Register" handleSubmit={this.handleSubmit}>
 						<div className="row">
@@ -108,6 +108,13 @@ export default class RegistrationPage extends React.Component {
 								<Input type="text" name="email" value={this.state.credentials.email || ''} handleInputChange={this.handleInputChange} validate="email" required={true} />
 							</div>
 						</div>
+						<label className="required">User Role</label>
+						<Select name="role" value={this.state.credentials.role} handleInputChange={this.handleInputChange} required={true}>
+							<option value="">--Select--</option>
+							<option value="siteAdmin">Site Admin</option>
+							<option value="movieAdmin">Movie Admin</option>
+							<option value="directorAdmin">Director Admin</option>
+						</Select>
 						<div className="row">
 							<div className="form-group small-12 columns">
 								<label className="required">Password</label>

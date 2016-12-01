@@ -4,6 +4,7 @@ import React from 'react';
 import { Router, browserHistory } from 'react-router';
 import AlertActions from '../library/alerts/actions/AlertActions';
 import routes from '../routes';
+import authorizedRoutesConfig from '../constants/authorizedRoutesConfig';
 import UserStore from '../library/authentication/stores/UserStore';
 
 export default class AppRoutes extends React.Component {
@@ -11,7 +12,8 @@ export default class AppRoutes extends React.Component {
 		super();
 
 		this.state = {
-			authenticated: false
+			authenticated: false,
+			currentUser: {}
 		}
 
 		this.onUserChange = this.onUserChange.bind(this);
@@ -29,18 +31,27 @@ export default class AppRoutes extends React.Component {
 	}
 
 	onViewChange(location) {
-		let restrictedRoutes = [
-			'/directors/edit/',
-			'/directors/create',
-			'/movies/edit/',
-			'/movies/create'
-		]
 		if (!this.state.authenticated) {
-			restrictedRoutes.forEach((route) => {
-				if (location.pathname.indexOf(route) !== -1) {
+			authorizedRoutesConfig.forEach((route) => {
+				if (location.pathname.indexOf(route.path) !== -1) {
 					this.showAlert('notAuthenticated');
-					UserStore.setPreviousRoute(location.pathname);
+					UserStore.setRedirectRoute(location.pathname);
 					browserHistory.push('/login');
+				}
+			})
+		} else {
+			let homeState = UserStore.getUser().roleConfig ? UserStore.getUser().roleConfig.homeState : '/';
+			UserStore.setRedirectRoute(homeState);
+
+			authorizedRoutesConfig.forEach((route) => {
+				if (location.pathname.indexOf(route.path) !== -1) {
+					let accessGranted = UserStore.checkAuthorization(route.accessControl);
+					if (accessGranted) {
+						return;
+					} else {
+						this.showAlert('notAuthorized');
+						browserHistory.push('/');
+					}
 				}
 			})
 		}
@@ -48,7 +59,8 @@ export default class AppRoutes extends React.Component {
 
 	onUserChange() {
 		this.setState({
-			authenticated: UserStore.checkAuthentication()
+			authenticated: UserStore.checkAuthentication(),
+			currentUser: UserStore.getUser()
 		})
 	}
 
@@ -65,6 +77,15 @@ export default class AppRoutes extends React.Component {
 					title: 'Not Authenticated',
 					message: 'Please login or register to continue.',
 					type: 'info',
+					delay: 3000
+				});
+			},
+			'notAuthorized': () => {
+				AlertActions.addAlert({
+					show: true,
+					title: 'Not Authorized',
+					message: 'Redirected: You do not have authorization to view this content.',
+					type: 'error',
 					delay: 3000
 				});
 			}

@@ -61,6 +61,10 @@ module.exports = [
 					})
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['movieAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }
@@ -93,6 +97,10 @@ module.exports = [
 					})
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['movieAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }
@@ -111,6 +119,10 @@ module.exports = [
                     id: Joi.number().required()
                 }
             },
+			auth: {
+				strategy: 'jsonWebToken',
+				scope: ['movieAdmin', 'siteAdmin']
+			},
             cors: {
                 origin: ['*']
             }
