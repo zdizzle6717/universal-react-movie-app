@@ -7,38 +7,41 @@ import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
-export default class Select extends React.Component {
-	// NOTE: this.state.initial represents an input that already has a value but has not yet been validated
+export default class CheckBox extends React.Component {
+	// NOTE: An initial state value should be set in the parent component (true/false)
 
 	constructor() {
         super();
 
-        this.state = {
+		this.state = {
+			checked: false,
 			initial: true,
 			valid: true,
 			touched: false,
 			pristine: true,
 			form: ''
-        };
+		}
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
 		this.handleFocus = this.handleFocus.bind(this);
 		this.handleBlur = this.handleBlur.bind(this);
 		this.validateInit = this.validateInit.bind(this);
-		this.validateInput = this.validateInput.bind(this);
+		this.validateInputChange = this.validateInputChange.bind(this);
     }
 
 	componentDidMount() {
+		// TODO: If new form, set the model value by triggering this.props.handleInputChange(e)
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('form').getAttribute('name');
 		let validity = this.props.required ? false : true;
 		this.setState({
+			checked: this.props.value || false,
 			valid: validity,
 			form: formName
 		});
 		let input = {
 			name: this.props.name,
-			value: this.props.value,
+			value: this.props.value || false,
 			form: formName,
 			valid: validity
 		};
@@ -70,6 +73,7 @@ export default class Select extends React.Component {
 		let formName = elem.closest('form').getAttribute('name');
 		let validity = props.required ? (props.value ? true : false) : true;
 		this.setState({
+			checked: props.value,
 			initial: false,
 			valid: validity
 		});
@@ -85,16 +89,17 @@ export default class Select extends React.Component {
 		});
 	}
 
-	validateInput(e) {
-		e.preventDefault();
-		let validity = this.props.required ? (e.target.value ? true : false) : true;
+	validateInputChange(e) {
+		// We are validating for the new value, so some booleans may seem to be reversed
+		let validity = this.props.required ? (!this.state.checked ? true : false) : true;
 		this.setState({
+			checked: !this.state.checked,
 			valid: validity,
 			pristine: false
 		});
 		let input = {
-			name: e.target.name,
-			value: e.target.value,
+			name: this.props.name,
+			value: !this.state.checked,
 			valid: validity,
 			form: this.state.form,
 			initial: false
@@ -123,6 +128,7 @@ export default class Select extends React.Component {
 	}
 
 	render() {
+		// TODO: These may not necessarily be needed
 		let validationClasses = classNames({
 			'valid': this.state.valid,
 			'invalid': !this.state.valid,
@@ -136,17 +142,17 @@ export default class Select extends React.Component {
 
 		return (
 			<div className="validate-error-element">
-				<select className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} onChange={this.validateInput} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}>
-					{this.props.children}
-				</select>
+				<input className={validationClasses} name={this.props.name} id={this.props.name} type="checkbox" checked={this.state.checked} onClick={this.handleMouseDown} onChange={this.validateInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}/>
+				<label className={this.props.required ? 'required' : ''} htmlFor={this.props.name}>{this.props.label}</label>
 			</div>
 		)
 	}
 }
 
-Select.propTypes = {
+CheckBox.propTypes = {
 	name: React.PropTypes.string.isRequired,
-	value: React.PropTypes.string,
+	value: React.PropTypes.bool,
+	label: React.PropTypes.string.isRequired,
 	validateMessage: React.PropTypes.string,
 	handleInputChange: React.PropTypes.func.isRequired,
 	required: React.PropTypes.bool,

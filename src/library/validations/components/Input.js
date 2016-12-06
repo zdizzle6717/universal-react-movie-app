@@ -189,6 +189,7 @@ export default class Input extends React.Component {
 Input.propTypes = {
 	type: React.PropTypes.string.isRequired,
 	name: React.PropTypes.string.isRequired,
+	value: React.PropTypes.string,
 	placeholder: React.PropTypes.string,
 	min: React.PropTypes.string,
 	max: React.PropTypes.string,

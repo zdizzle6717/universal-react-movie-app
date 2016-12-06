@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import Animation from 'react-addons-css-transition-group';
 import AlertActions from '../../library/alerts/actions/AlertActions';
 import Modal from '../../library/modal';
 import MovieRow from '../pieces/MovieRow';
@@ -75,7 +74,7 @@ export default class IndexPage extends React.Component {
 			'directorDeleted': () => {
 				AlertActions.addAlert({
 					show: true,
-					title: 'Director Delted',
+					title: 'Director Deleted',
 					message: 'A director was successfully deleted.',
 					type: 'info',
 					delay: 3000
@@ -164,8 +163,8 @@ export default class IndexPage extends React.Component {
                         </tbody>
                     </table>
                 </div>
-				<Modal key="movieModal" name="movieModal" modalIsOpen={this.state.movieModalIsOpen} handleSubmit={this.handleModalSubmit.bind(this, 'movie')} handleClose={this.toggleModal.bind(this, 'movie')} title="Remove Movie">Are you sure you want to delete {this.state.modalData.title}'s data'?</Modal>
-				<Modal key="directorModal" name="directorModal" modalIsOpen={this.state.directorModalIsOpen} handleSubmit={this.handleModalSubmit.bind(this, 'director')} handleClose={this.toggleModal.bind(this, 'director')} title="Remove Contact">Are you sure you want to delete {this.state.modalData.firstName} {this.state.modalData.lastName}?</Modal>
+				<Modal name="movieModal" modalIsOpen={this.state.movieModalIsOpen} handleSubmit={this.handleModalSubmit.bind(this, 'movie')} handleClose={this.toggleModal.bind(this, 'movie')} title="Remove Movie">Are you sure you want to delete {this.state.modalData.title}'s data'?</Modal>
+				<Modal name="directorModal" modalIsOpen={this.state.directorModalIsOpen} handleSubmit={this.handleModalSubmit.bind(this, 'director')} handleClose={this.toggleModal.bind(this, 'director')} title="Remove Contact">Are you sure you want to delete {this.state.modalData.firstName} {this.state.modalData.lastName}?</Modal>
 			</div>
 	    );
 	}

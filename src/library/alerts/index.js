@@ -38,7 +38,7 @@ export default class Alerts extends React.Component {
     render() {
 	    return (
 			<div className="alert-container">
-				<Animation transitionName="fade" transitionAppear={false} transitionEnter={true} transitionEnterTimeout={500} transitionLeave={true} transitionLeaveTimeout={500}>
+				<Animation transitionName="slide-bottom" transitionAppear={false} transitionEnter={true} transitionEnterTimeout={500} transitionLeave={true} transitionLeaveTimeout={500}>
 					{this.state.alerts.map((alert, i) => {
 						return <AlertBox key={i} {...alert} closeAlert={this.closeAlert.bind(this, alert)}></AlertBox>
 					})}

@@ -1,22 +1,22 @@
 // Main view
-$animations: 'fade';
+$animations: 'fade', 'slide-top', 'slide-bottom', 'slide-left', 'slide-right', 'slide-z';
 @each $animation in $animations {
 	.#{$animation}-enter,
 	.#{$animation}-appear {
-		opacity: 0;
 	    animation: #{$animation}-in 500ms;
 
 		&.#{$animation}-enter-active,
 		&.#{$animation}-appear-active {
 			opacity: 1;
+			z-index: 10000;
 		}
 	}
 
 	.#{$animation}-leave {
-		opacity: 1;
 	    animation: #{$animation}-out 500ms;
 
 		&.#{$animation}-leave-active {
+			z-index: -1;
 			opacity: 0;
 		}
 	}
@@ -35,7 +35,7 @@ $animations: 'fade';
 
 		&.view-enter-active,
 		&.view-appear-active {
-			opacity: 1;
+			visibility: visible;
 		}
 	}
 
@@ -47,18 +47,62 @@ $animations: 'fade';
 		animation: fade-out 500ms;
 
 		&.view-leave-active {
-			opacity: 0;
+			visibility: hidden;
 		}
 	}
 }
 
 // Animation
 @keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+@keyframes fade-out {
+	from { opacity: 1; }
+	to   { opacity: 0; }
 }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+@keyframes slide-top-in {
+	from { transform: translate3d(0, -100%, 0); }
+	to   { transform: translate3d(0, 0, 0); }
+}
+@keyframes slide-top-out {
+	from { transform: translate3d(0, 0, 0); z-index: 100; opacity: 1; }
+	to   { transform: translate3d(0, -100%, 0); z-index: 0; }
+}
+
+@keyframes slide-bottom-in {
+	from { transform: translate3d(0, 100%, 0); }
+	to   { transform: translate3d(0, 0, 0); }
+}
+@keyframes slide-bottom-out {
+	from { transform: translate3d(0, 0, 0); z-index: 100; opacity: 1; }
+	to   { transform: translate3d(0, 100%, 0); z-index: 0; }
+}
+
+@keyframes slide-left-in {
+	from { transform: translate3d(-100%, 0, 0); }
+	to   { transform: translate3d(0, 0, 0); }
+}
+@keyframes slide-left-out {
+	from { transform: translate3d(0, 0, 0); z-index: 100; opacity: 1; }
+	to   { transform: translate3d(-100%, 0, 0); z-index: 0; }
+}
+
+@keyframes slide-right-in {
+	from { transform: translate3d(100%, 0, 0); }
+	to   { transform: translate3d(0, 0, 0); }
+}
+@keyframes slide-right-out {
+	from { transform: translate3d(0, 0, 0); z-index: 100; opacity: 1; }
+	to   { transform: translate3d(100%, 0, 0); z-index: 0; }
+}
+
+@keyframes slide-z-in {
+	from { transform: perspective(100px) translateZ(-100px); }
+	to   { transform: perspective(0) translateZ(0); }
+}
+@keyframes slide-z-out {
+	from { transform: perspective(0) translateZ(0); z-index: 100; opacity: 1; }
+	to   { transform: perspective(100px) translateZ(-100px); z-index: 0; }
 }

@@ -14,7 +14,7 @@ export default class RadioGroup extends React.Component {
         super();
 
 		this.state = {
-			checked: false,
+			checked: '',
 			initial: true,
 			valid: true,
 			touched: false,
@@ -30,12 +30,7 @@ export default class RadioGroup extends React.Component {
     }
 
 	componentDidMount() {
-		this.setState({
-			checked: this.props.value || this.props.options[0]
-		});
-	}
-
-	componentDidMount() {
+		// TODO: If new form, set the model value by triggering this.props.handleInputChange(e)
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('form').getAttribute('name');
 		let validity = this.props.required ? false : true;
@@ -75,6 +70,7 @@ export default class RadioGroup extends React.Component {
 	}
 
 	validateInit(props) {
+		console.log(props);
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('form').getAttribute('name');
 		let validity = props.required ? (props.value ? true : false) : true;
@@ -148,7 +144,7 @@ export default class RadioGroup extends React.Component {
 			<div className="validate-error-element">
 				<label htmlFor={this.props.name}>{this.props.label}</label>
 				{this.props.options.map((option) => <div key={option} className="radio-group">
-					<input name={this.props.name} value={option} type="radio" checked={this.state.checked === option} onChange={this.validateInputChange.bind(this, option)}/> <label htmlFor={option} onClick={this.validateInputChange.bind(this, option)}>{option}</label>
+					<input name={this.props.name} id={this.props.name} value={option} type="radio" checked={this.state.checked === option} onChange={this.validateInputChange.bind(this, option)}/> <label htmlFor={option} onClick={this.validateInputChange.bind(this, option)}>{option}</label>
 				</div>)}
 			</div>
 		)

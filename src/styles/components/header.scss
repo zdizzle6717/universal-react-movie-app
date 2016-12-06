@@ -15,7 +15,6 @@ header {
 
 	.nav {
 		display: flex;
-		height: 100%;
 
 		.home-link,
 		.menu-toggle {
@@ -56,56 +55,67 @@ header {
 		    }
 		}
 
-		.menu-group {
+		.animation-wrapper {
 			display: flex;
 			flex-grow: 1;
 			z-index: 90;
 
-			.main-menu {
-				flex-grow: 1;
+			.mobile-menu-group {
+				display: none;
 			}
 
-			.login-menu {
-				justify-content: flex-end;
-			}
-
-			.main-menu,
-			.login-menu {
+			.menu-group,
+			.mobile-menu-group {
 				display: flex;
-				padding: 0;
-				margin: 0;
-				flex-direction: row;
-				align-items: center;
+				flex-grow: 1;
+				z-index: 90;
 
-				li {
-					padding: 0;
-					list-style-type: none;
-					height: 100%;
-
-					a {
-						color: $white;
-						padding: 1rem;
-						height: 100%;
-						line-height: 1;
-						display: flex;
-						align-items: center;
-						transition: background 300ms;
-
-						&:hover,
-						&.active {
-							background: $primary-700;
-						}
-					}
+				.main-menu {
+					flex-grow: 1;
 				}
 
-			    .active {
-			        a {
-			            transition: all 500ms;
-			            color: #2199e8;
-			            background: transparent;
-			            text-decoration: underline;
-			        }
-			    }
+				.login-menu {
+					justify-content: flex-end;
+				}
+
+				.main-menu,
+				.login-menu {
+					display: flex;
+					padding: 0;
+					margin: 0;
+					flex-direction: row;
+					align-items: center;
+
+					li {
+						padding: 0;
+						list-style-type: none;
+						height: 100%;
+
+						a {
+							color: $white;
+							padding: 1rem;
+							height: 100%;
+							line-height: 1;
+							display: flex;
+							align-items: center;
+							transition: background 300ms;
+
+							&:hover,
+							&.active {
+								background: $primary-700;
+							}
+						}
+					}
+
+				    .active {
+				        a {
+				            transition: all 500ms;
+				            color: #2199e8;
+				            background: transparent;
+				            text-decoration: underline;
+				        }
+				    }
+				}
 			}
 		}
 
@@ -129,8 +139,6 @@ header {
 // Media Query
 @media screen and (max-width: 800px) {
 	header {
-		font-size: 1rem;
-
 		.nav {
 			.home-link {
 				flex-grow: 1;
@@ -140,30 +148,33 @@ header {
 		        display: inline;
 		    }
 
-			.menu-group {
-				display: none;
-				width: 100%;
-				position: fixed;
-				top: 52px;
-				background: $primary-500;
-				box-shadow: $shadow-3;
+			.animation-wrapper {
+				position: absolute;
 
-				&.show {
-					display: block;
-
+				.menu-group {
+					display: none;
 				}
 
-				.main-menu,
-				.login-menu {
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
+				.mobile-menu-group {
+					display: block;
+					width: 100%;
+					position: fixed;
+					top: 52px;
+					background: $primary-500;
+					box-shadow: $shadow-3;
 
-					li,
-					a {
-						width: 100%;
-					}
-			    }
+					.main-menu,
+					.login-menu {
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+
+						li,
+						a {
+							width: 100%;
+						}
+				    }
+				}
 			}
 		}
 	}

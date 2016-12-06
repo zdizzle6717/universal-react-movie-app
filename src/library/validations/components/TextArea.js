@@ -146,6 +146,7 @@ export default class TextArea extends React.Component {
 
 TextArea.propTypes = {
 	name: React.PropTypes.string.isRequired,
+	value: React.PropTypes.string,
 	placeholder: React.PropTypes.string,
 	rows: React.PropTypes.string,
 	validateMessage: React.PropTypes.string,

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import classNames from 'classnames';
+import Animation from 'react-addons-css-transition-group';
 import AlertActions from '../../library/alerts/actions/AlertActions';
 import { Link, browserHistory } from 'react-router';
 import UserStore from '../../library/authentication/stores/UserStore';
@@ -78,11 +79,6 @@ export default class TopNav extends React.Component {
 	}
 
 	render() {
-		let menuClasses = classNames({
-			'menu-group': true,
-			'show': this.state.showMobileMenu
-		})
-
 		let backdropClasses = classNames({
 			'menu-backdrop': true,
 			'show': this.state.showMobileMenu
@@ -96,33 +92,65 @@ export default class TopNav extends React.Component {
 				<div className="menu-toggle" onClick={this.toggleMenu}>
 					<i className="fa fa-bars"></i>
 				</div>
-				<div className={menuClasses} onClick={this.closeMenu}>
-					<ul className="main-menu">
-						<li className="">
-							<Link key="movies" to="/movies" className="menu-link" activeClassName="active">Movies</Link>
-						</li>
-						<li className="">
-							<Link key="directors" to="/directors" className="menu-link" activeClassName="active">Directors</Link>
-						</li>
-						<li className="">
-							<a href="http://www.react.zackanselm.com:8080/api/documentation" target="_blank">Api Guide</a>
-						</li>
-						<li className="">
-							<a href="https://github.com/zdizzle6717/universal-react-movie-app" target="_blank">Git</a>
-						</li>
-					</ul>
-					<ul className="login-menu">
-						{
-							this.state.authenticated ?
-							<li className="login-link">
-								<a className="menu-link" onClick={this.logout}>Logout</a>
-							</li> :
-							<li className="login-link">
-								<Link key="login" to="/login" className="menu-link" activeClassName="active">Login/Register</Link>
+				<Animation transitionName="slide-top" className="animation-wrapper" transitionEnter={true} transitionEnterTimeout={500} transitionLeave={true} transitionLeaveTimeout={500}>
+					<div className="menu-group" onClick={this.closeMenu}>
+						<ul className="main-menu">
+							<li className="">
+								<Link key="movies" to="/movies" className="menu-link" activeClassName="active">Movies</Link>
 							</li>
-						}
-					</ul>
-				</div>
+							<li className="">
+								<Link key="directors" to="/directors" className="menu-link" activeClassName="active">Directors</Link>
+							</li>
+							<li className="">
+								<a href="http://www.react.zackanselm.com:8080/api/documentation" target="_blank">Api Guide</a>
+							</li>
+							<li className="">
+								<a href="https://github.com/zdizzle6717/universal-react-movie-app" target="_blank">Git</a>
+							</li>
+						</ul>
+						<ul className="login-menu">
+							{
+								this.state.authenticated ?
+								<li className="login-link">
+									<a className="menu-link" onClick={this.logout}>Logout</a>
+								</li> :
+								<li className="login-link">
+									<Link key="login" to="/login" className="menu-link" activeClassName="active">Login/Register</Link>
+								</li>
+							}
+						</ul>
+					</div>
+					{
+						this.state.showMobileMenu &&
+						<div className="mobile-menu-group" onClick={this.closeMenu}>
+							<ul className="main-menu">
+								<li className="">
+									<Link key="movies" to="/movies" className="menu-link" activeClassName="active">Movies</Link>
+								</li>
+								<li className="">
+									<Link key="directors" to="/directors" className="menu-link" activeClassName="active">Directors</Link>
+								</li>
+								<li className="">
+									<a href="http://www.react.zackanselm.com:8080/api/documentation" target="_blank">Api Guide</a>
+								</li>
+								<li className="">
+									<a href="https://github.com/zdizzle6717/universal-react-movie-app" target="_blank">Git</a>
+								</li>
+							</ul>
+							<ul className="login-menu">
+								{
+									this.state.authenticated ?
+									<li className="login-link">
+										<a className="menu-link" onClick={this.logout}>Logout</a>
+									</li> :
+									<li className="login-link">
+										<Link key="login" to="/login" className="menu-link" activeClassName="active">Login/Register</Link>
+									</li>
+								}
+							</ul>
+						</div>
+					}
+				</Animation>
 				<div className={backdropClasses} onClick={this.closeMenu}></div>
 			</div>
 	    );
