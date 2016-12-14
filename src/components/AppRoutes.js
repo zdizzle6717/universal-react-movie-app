@@ -6,6 +6,7 @@ import AlertActions from '../library/alerts/actions/AlertActions';
 import routes from '../routes';
 import authorizedRoutesConfig from '../constants/authorizedRoutesConfig';
 import UserStore from '../library/authentication/stores/UserStore';
+import scrollTo from '../library/utils/ScrollTo';
 
 export default class AppRoutes extends React.Component {
 	constructor() {
@@ -96,7 +97,7 @@ export default class AppRoutes extends React.Component {
 
 	render() {
 		return (
-			<Router history={browserHistory} routes={routes} onUpdate={() => window.scrollTo(0, 0)}/>
+			<Router history={browserHistory} routes={routes} onUpdate={() => scrollTo(0, 0)}/>
 		);
 	}
 }

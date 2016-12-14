@@ -11,7 +11,7 @@
 		&.touched.invalid:not(.focused),
 		&.blurred.invalid,
 		&.dirty.invalid {
-			border: 2px dotted $alert-600;
+			border: 2px solid $alert-600;
 		}
 
 		.file-count {

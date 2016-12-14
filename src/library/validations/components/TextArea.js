@@ -7,19 +7,23 @@ import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
-export default class TextArea extends React.Component {
-	// TODO: Show message text as an array of validation messages
-	// NOTE: this.state.initial represents an input that already has a value but has not yet been validated
+// TODO: Consider moving all of the components state to the Form Store
+// TODO: Show message text as an array of validation messages
 
+export default class TextArea extends React.Component {
 	constructor() {
         super();
 
         this.state = {
-			initial: true,
-			valid: true,
-			touched: false,
-			pristine: true,
-			form: ''
+			'name': null,
+			'value': null,
+			'formName': null,
+			'valid': true,
+			'initial': true,
+			'touched': false,
+			'pristine': true,
+			'focused': false,
+			'blurred': false
         };
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -30,57 +34,52 @@ export default class TextArea extends React.Component {
     }
 
 	componentDidMount() {
-		let elem = ReactDOM.findDOMNode(this);
-		let formName = elem.closest('form').getAttribute('name');
-		let validity = this.props.required ? false : true;
-		this.setState({
-			valid: validity,
-			form: formName
-		});
-		let input = {
-			name: this.props.name,
-			value: this.props.value,
-			form: formName,
-			valid: validity
-		};
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.validateInit(this.props);
 	}
 
 	// Accounts for initial data check and conditionally required inputs
 	componentWillReceiveProps(nextProps) {
 		if (this.state.initial && this.state.pristine && nextProps.value || this.props.required !== nextProps.required) {
-			this.validateInit(nextProps);
+			this.validateInit(nextProps, true);
 		}
 	}
 
 	// This will update validation in the case that an input is conditionally visible
 	componentWillUnmount() {
-		let input = {
-			name: this.props.name,
-			form: this.state.form
+		if (!this.props.preserveState) {
+			let input = {
+				'name': this.props.name,
+				'formName': this.state.formName
+			}
+			setTimeout(() => {
+				FormActions.removeInput(input);
+			});
 		}
-		setTimeout(() => {
-			FormActions.removeInput(input);
-		});
 	}
 
-	validateInit(props) {
+	validateInit(props, propsHaveLoaded = false) {
 		let elem = ReactDOM.findDOMNode(this);
-		let formName = elem.closest('form').getAttribute('name');
+		let formName = elem.closest('.form').getAttribute('name');
+		let existingInput = FormStore.getInput(formName, props.name);
+		if (existingInput) {
+			this.setState(existingInput);
+			return;
+		}
 		let validity = props.required ? (props.value ? true : false) : true;
-		this.setState({
-			initial: false,
-			valid: validity,
-		});
 		let input = {
-			name: props.name,
-			value: props.value,
-			valid: validity,
-			form: formName,
-			initial: false
+			'name': props.name,
+			'value': props.value,
+			'formName': formName,
+			'valid': validity
 		};
+		this.setState(input);
+		if (propsHaveLoaded) {
+			input.initial = false;
+			this.setState({
+				'initial': false
+			})
+		}
+		input = Object.assign(this.state, input);
 		setTimeout(() => {
 			FormActions.addInput(input);
 		});
@@ -89,38 +88,49 @@ export default class TextArea extends React.Component {
 	validateInput(e) {
 		e.preventDefault();
 		let validity = this.props.required ? (e.target.value ? true : false) : true;
-		this.setState({
-			valid: validity,
-			pristine: false
-		});
 		let input = {
-			name: e.target.name,
-			value: e.target.value,
-			valid: validity,
-			form: this.state.form,
-			initial: false
+			'name': e.target.name,
+			'value': e.target.value,
+			'valid': validity,
+			'initial': false,
+			'pristine': false
 		}
+		input = Object.assign(this.state, input);
+		this.setState(input);
 		FormActions.addInput(input);
 		this.props.handleInputChange(e);
 	}
 
 	handleMouseDown() {
+		let input = Object.assign(this.state, {'touched': true});
 		this.setState({
-			touched: true
-		})
+			'touched': true
+		});
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
 	}
 
 	handleFocus() {
+		let input = Object.assign(this.state, {'focused': true, 'blurred': false});
 		this.setState({
-			focused: true
-		})
+			'focused': true,
+			'blurred': false
+		});
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
 	}
 
 	handleBlur() {
+		let input = Object.assign(this.state, {'focused': false, 'blurred': true});
 		this.setState({
-			focused: false,
-			blurred: true
-		})
+			'focused': false,
+			'blurred': true
+		});
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
 	}
 
 	render() {
@@ -137,7 +147,7 @@ export default class TextArea extends React.Component {
 
 		return (
 			<div className="validate-error-element">
-				<textarea className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} rows={this.props.rows} placeholder={this.props.placeholder} onChange={this.validateInput} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}>
+				<textarea className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} rows={this.props.rows} placeholder={this.props.placeholder} onChange={this.validateInput} onMouseDown={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}>
 				</textarea>
 			</div>
 		)
@@ -145,12 +155,17 @@ export default class TextArea extends React.Component {
 }
 
 TextArea.propTypes = {
-	name: React.PropTypes.string.isRequired,
-	value: React.PropTypes.string,
-	placeholder: React.PropTypes.string,
-	rows: React.PropTypes.string,
-	validateMessage: React.PropTypes.string,
-	handleInputChange: React.PropTypes.func.isRequired,
-	required: React.PropTypes.bool,
-	disabled: React.PropTypes.bool
+	'name': React.PropTypes.string.isRequired,
+	'value': React.PropTypes.string,
+	'placeholder': React.PropTypes.string,
+	'rows': React.PropTypes.string,
+	'validateMessage': React.PropTypes.string,
+	'handleInputChange': React.PropTypes.func.isRequired,
+	'preserveState': React.PropTypes.bool,
+	'required': React.PropTypes.bool,
+	'disabled': React.PropTypes.bool
 }
+
+TextArea.defaultProps = {
+	'preserveState': false
+};

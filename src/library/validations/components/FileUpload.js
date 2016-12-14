@@ -8,27 +8,34 @@ import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 import { addErrorMessage, removeErrorMessage } from '../utils/updateErrorMessages';
 
-export default class FileUpload extends React.Component {
-	// TODO: Drag & Drop functionality
+// TODO: Similar to Input component, store and retrieve validity in Form for tabs
+// TODO: Drag & Drop functionality
 
-	constructor() {
-		super();
+export default class FileUpload extends React.Component {
+	constructor(props) {
+		super(props);
 
 		this.state = {
+			name: null,
+			value: null,
+			formName: null,
+			valid: true,
 			initial: true,
 			file: {},
 			files: [],
 			filesUploaded: [],
-			form: '',
-			maxFiles: 5,
-			minSize: 0,
-			maxSize: 100,
+			formName: '',
+			maxFiles: props.maxFiles,
+			// File size is multiplied to allow input in MB's
+			minSize: props.minSize * Math.pow(1024, 2),
+			maxSize: props.maxSize * Math.pow(1024, 2),
 			showErrors: false,
 			showFileList: false,
-			valid: true,
 			touched: false,
 			pristine: true,
-			errors: []
+			errors: [],
+			focused: false,
+			blurred: false
 		};
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -43,14 +50,10 @@ export default class FileUpload extends React.Component {
 
 	componentDidMount() {
 		let elem = ReactDOM.findDOMNode(this);
-		let formName = elem.closest('form').getAttribute('name');
+		let formName = elem.closest('.form').getAttribute('name');
 		if (this.props.singleFile && this.props.multiple) {
 			throw new Error(' Oops! If singleFile prop is true, multiple prop must be false. (FileUpload.js)')
 		}
-		this.state.maxFiles = this.props.maxFiles ? this.props.maxFiles : this.state.maxFiles;
-		// File size is multiplied to display in MB
-		this.state.minSize = this.props.minSize ? this.props.minSize * Math.pow(1024, 2) : this.state.minSize * Math.pow(1024, 2);
-		this.state.maxSize = this.props.maxSize ? this.props.maxSize * Math.pow(1024, 2) : this.state.maxSize * Math.pow(1024, 2);
 		let validity = true;
 		if (this.props.required) {
 			if (this.props.required > this.state.maxFiles) {
@@ -60,12 +63,12 @@ export default class FileUpload extends React.Component {
 		}
 		this.setState({
 			valid: validity,
-			form: formName
+			formName: formName
 		});
 		let input = {
 			name: this.props.name,
 			value: this.props.value,
-			form: formName,
+			formName: formName,
 			valid: validity
 		};
 		setTimeout(() => {
@@ -83,19 +86,21 @@ export default class FileUpload extends React.Component {
 
 	// This will update validation in the case that an input is conditionally visible
 	componentWillUnmount() {
-		let input = {
-			name: this.props.name,
-			form: this.state.form
+		if (!this.props.preserveState) {
+			let input = {
+				name: this.props.name,
+				formName: this.state.formName
+			}
+			setTimeout(() => {
+				FormActions.removeInput(input);
+			});
 		}
-		setTimeout(() => {
-			FormActions.removeInput(input);
-		});
 	}
 
 	// This checks the validation of any input containing data on first render
 	validateInit(props) {
 		let elem = ReactDOM.findDOMNode(this);
-		let formName = elem.closest('form').getAttribute('name');
+		let formName = elem.closest('.form').getAttribute('name');
 		let validity;
 		if (this.props.singleFile) {
 			let file = props.value || {};
@@ -120,7 +125,7 @@ export default class FileUpload extends React.Component {
 			name: props.name,
 			value: props.value,
 			valid: validity,
-			form: formName
+			formName: formName
 		};
 		setTimeout(() => {
 			FormActions.addInput(input);
@@ -199,7 +204,7 @@ export default class FileUpload extends React.Component {
 				name: e.target.name,
 				value: newFile,
 				valid: validity,
-				form: this.state.form,
+				formName: this.state.formName,
 				initial: false
 			}
 			FormActions.addInput(input);
@@ -230,7 +235,7 @@ export default class FileUpload extends React.Component {
 			}
 
 			// Update new file list and check for duplicate file names
-			// TODO: BUG Selecting 2 consecutive files (in Google Chrome) of the same name and file size seems to skip this step ???
+			// BUG: Selecting 2 consecutive files (in Google Chrome) of the same name and file size seems to skip this step ???
 			for (let i = 0; i < newFiles.length; i++) {
 				if (existingFiles.length === 0) {
 					existingFiles.push(newFiles[i]);
@@ -276,7 +281,7 @@ export default class FileUpload extends React.Component {
 				name: e.target.name,
 				value: updatedFiles,
 				valid: validity,
-				form: this.state.form,
+				formName: this.state.formName,
 				initial: false
 			}
 			FormActions.addInput(input);
@@ -324,7 +329,7 @@ export default class FileUpload extends React.Component {
 				name: this.props.name,
 				value: {},
 				valid: validity,
-				form: this.state.form,
+				formName: this.state.formName,
 				initial: false
 			}
 			FormActions.addInput(input);
@@ -347,7 +352,7 @@ export default class FileUpload extends React.Component {
 				name: this.props.name,
 				value: files,
 				valid: validity,
-				form: this.state.form,
+				formName: this.state.formName,
 				initial: false
 			}
 			FormActions.addInput(input);
@@ -418,10 +423,10 @@ export default class FileUpload extends React.Component {
 		return (
 			<div className="upload-container">
 				<div className={validationClasses}>
-					<label htmlFor={this.props.name}>Browse Files...</label>
+					<label htmlFor={this.props.name} onMouseDown={this.handleMouseDown} >Browse Files...</label>
 					<div className="file-count">{this.props.singleFile ? (this.state.file.name ? 1 : 0) : this.state.files.length || 0}{this.props.required ? '/' : ''}
 						{this.props.singleFile && this.props.required ? 1 : (!this.props.singleFile && this.props.required ? this.props.required : '')}</div>
-					<input type="file" name={this.props.name} id={this.props.name} onChange={this.validateFiles} onClick={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} accept={this.props.accept} multiple={this.props.multiple}/>
+					<input type="file" name={this.props.name} id={this.props.name} onChange={this.validateFiles} onFocus={this.handleFocus} onBlur={this.handleBlur} accept={this.props.accept} multiple={this.props.multiple}/>
 				</div>
 				<div className="file-info">
 					<div className={fileContainerClasses}>
@@ -431,7 +436,7 @@ export default class FileUpload extends React.Component {
 						{
 							!this.props.singleFile &&this.state.files.length < 1 && this.state.showFileList ||
 							this.props.singleFile && !this.state.file.name && this.state.showFileList ?
-							<div className="help-text">Click above to browse for files or drag & drop files</div> :
+							<div className="help-text">Drag & drop files or click above to browse for files</div> :
 							<div className={fileListClasses}>
 								<table className="file-list-table">
 		 							<thead>
@@ -488,6 +493,14 @@ FileUpload.propTypes = {
 	maxFiles: React.PropTypes.number,
 	minSize: React.PropTypes.number,
 	maxSize: React.PropTypes.number,
+	preserveState: React.PropTypes.bool,
 	required: React.PropTypes.number,
 	disabled: React.PropTypes.bool
 }
+
+FileUpload.defaultProps = {
+	maxFiles: 5,
+	minSize: 0,
+	maxSize: 100,
+	preserveState: false
+};

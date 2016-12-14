@@ -8,6 +8,22 @@
 
 .validate-error-element {
 	position: relative;
+
+	&.check-box,
+	&.radio-group {
+		&.touched.invalid:not(.focused),
+		&.blurred.invalid,
+		&.dirty.invalid {
+			border: 1px solid $alert-500;
+			margin: 0 0 1rem;
+			padding: 4px;
+			box-sizing: border-box;
+
+			input {
+				margin: 0;
+			}
+		}
+	}
 }
 
 .validate-errors {
@@ -40,7 +56,10 @@
 
 input.touched.invalid:not(.focused),
 input.blurred.invalid,
-input.dirty.invalid {
+input.dirty.invalid,
+textarea.touched.invalid:not(.focused),
+textarea.blurred.invalid,
+textarea.dirty.invalid {
 	border: 1px solid $alert-500;
 
 	& ~ .validate-errors {

@@ -6,46 +6,51 @@ import { EventEmitter } from 'events';
 
 const CHANGE_EVENT = 'form:change';
 
-let _inputs = [];
+let _forms = {};
 let _validity = {};
 
-function setInput(input) {
-	if (!input.form) {
+function setInput(newInput) {
+	let inputAlreadyExists = false;
+	if (!newInput.formName) {
+		console.log('Input has no form property');
 		return;
 	}
-	let inputExists = false;
-	for (let i = 0; i < _inputs.length; i++) {
-		if (_inputs[i].name === input.name && _inputs[i].form === input.form) {
-			inputExists = true;
-			_inputs[i] = input;
-			return setValidity(input.form);
+	if (_forms[newInput.formName]) {
+		_forms[newInput.formName].forEach((input, i) => {
+			if (input.name === newInput.name) {
+				inputAlreadyExists = true;
+				_forms[newInput.formName][i] = newInput;
+				return setValidity(newInput.formName)
+			}
+		});
+		if (!inputAlreadyExists) {
+			_forms[newInput.formName].push(newInput);
+			return setValidity(newInput.formName);
 		}
-	}
-	if (!inputExists) {
-		_inputs.push(input);
-		return setValidity(input.form);
+	} else {
+		_forms[newInput.formName] = [];
+		_forms[newInput.formName].push(newInput);
 	}
 }
 
-function removeInput(input) {
-	let showError = true;
-	for (let i = 0; i < _inputs.length; i++) {
-		if (_inputs[i].name === input.name && _inputs[i].form === input.form) {
-			showError = false;
-			_inputs.splice(i, 1);
-			return setValidity(input.form);
+function removeInput(oldInput) {
+	_forms[oldInput.formName].forEach((input, i) => {
+		if (input.name === oldInput.name) {
+			_forms[input.formName].splice(i, 1);
+			return setValidity(input.formName);
 		}
-	}
+	});
 }
 
 function setValidity(formName) {
 	_validity[formName] = true;
-	for (let i = 0; i < _inputs.length; i++) {
-		if (_inputs[i].valid === false && _inputs[i].form === formName) {
+	_forms[formName].forEach((input, i) => {
+		if (input.valid === false) {
 			_validity[formName] = false;
 			return _validity[formName];
 		}
-	}
+	});
+
 	if (_validity[formName]) {
 		return _validity[formName];
 	}
@@ -65,16 +70,46 @@ class FormStoreClass extends EventEmitter {
         this.removeListener(CHANGE_EVENT, callback);
     }
 
-    getInputs() {
-        return _inputs;
+	getInput(formName, inputName) {
+		let response = false;
+		if (_forms[formName]) {
+			_forms[formName].forEach((input, i) => {
+				if (input.name === inputName) {
+					response = input;
+				}
+			})
+		}
+		return response;
+	}
+
+    getForm(formName) {
+        return _forms[formName];
     }
 
 	getValidity(formName) {
 		return _validity[formName];
 	}
 
-	reset() {
-		_inputs = [];
+	getErrorCount(formName) {
+		let count = 0;
+		if (!_forms[formName]) {
+			return 0;
+		}
+		_forms[formName].forEach((input) => {
+			if (input.valid === false) {
+				count++;
+			}
+		});
+		return count;
+	}
+
+	resetForm(formName) {
+		_forms[formName] = [];
+		_validity[formName] = {};
+	}
+
+	resetAllForms() {
+		_forms = {};
 		_validity = {};
 	}
 
