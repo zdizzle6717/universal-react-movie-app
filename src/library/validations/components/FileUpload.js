@@ -8,7 +8,7 @@ import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 import { addErrorMessage, removeErrorMessage } from '../utils/updateErrorMessages';
 
-// TODO: Similar to Input component, store and retrieve validity in Form for tabs
+// TODO: Test and code cleanup
 // TODO: Drag & Drop functionality
 
 export default class FileUpload extends React.Component {
@@ -16,26 +16,25 @@ export default class FileUpload extends React.Component {
 		super(props);
 
 		this.state = {
-			name: null,
-			value: null,
-			formName: null,
-			valid: true,
-			initial: true,
-			file: {},
-			files: [],
-			filesUploaded: [],
-			formName: '',
-			maxFiles: props.maxFiles,
+			'name': null,
+			'value': null,
+			'formName': null,
+			'valid': true,
+			'initial': true,
+			'file': {},
+			'files': [],
+			'filesUploaded': [],
+			'formName': '',
+			'maxFiles': props.maxFiles,
 			// File size is multiplied to allow input in MB's
-			minSize: props.minSize * Math.pow(1024, 2),
-			maxSize: props.maxSize * Math.pow(1024, 2),
-			showErrors: false,
-			showFileList: false,
-			touched: false,
-			pristine: true,
-			errors: [],
-			focused: false,
-			blurred: false
+			'minSize': props.minSize * Math.pow(1024, 2),
+			'maxSize': props.maxSize * Math.pow(1024, 2),
+			'showFileList': false,
+			'touched': false,
+			'pristine': true,
+			'errors': [],
+			'focused': false,
+			'blurred': false
 		};
 
 		this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -54,23 +53,19 @@ export default class FileUpload extends React.Component {
 		if (this.props.singleFile && this.props.multiple) {
 			throw new Error(' Oops! If singleFile prop is true, multiple prop must be false. (FileUpload.js)')
 		}
-		let validity = true;
 		if (this.props.required) {
 			if (this.props.required > this.state.maxFiles) {
 				throw new Error(' Oops! Total required files must be less than the max total files allows. (FileUpload.js)');
 			}
-			validity = false
 		}
-		this.setState({
-			valid: validity,
-			formName: formName
-		});
 		let input = {
-			name: this.props.name,
-			value: this.props.value,
-			formName: formName,
-			valid: validity
+			'name': this.props.name,
+			'value': this.props.value,
+			'formName': formName
 		};
+		this.updateErrorMessages(input, (this.props.required ? false : true), 'filesRequired', 'This is a required field.');
+		input = Object.assign(this.state, input);
+		this.setState(input);
 		setTimeout(() => {
 			FormActions.addInput(input);
 		});
@@ -88,8 +83,8 @@ export default class FileUpload extends React.Component {
 	componentWillUnmount() {
 		if (!this.props.preserveState) {
 			let input = {
-				name: this.props.name,
-				formName: this.state.formName
+				'name': this.props.name,
+				'formName': this.state.formName
 			}
 			setTimeout(() => {
 				FormActions.removeInput(input);
@@ -101,32 +96,21 @@ export default class FileUpload extends React.Component {
 	validateInit(props) {
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('.form').getAttribute('name');
-		let validity;
-		if (this.props.singleFile) {
-			let file = props.value || {};
-			let validity = props.required ? !!file : true;
-			this.setState({
-				name: props.name,
-				file: file,
-				valid: validity,
-				initial: false
-			});
-		} else {
-			let files = props.value || [];
-			let validity = props.required ? (files.length >= props.required ? true : false) : true;
-			this.setState({
-				name: props.name,
-				files: files,
-				valid: validity,
-				initial: false
-			});
-		}
 		let input = {
-			name: props.name,
-			value: props.value,
-			valid: validity,
-			formName: formName
+			'name': props.name,
+			'initial': false
 		};
+		if (this.props.singleFile) {
+			input.file = props.value || {};
+			this.updateErrorMessages(input, (props.required ? !!input.file : true), 'filesRequired', 'This is a required field.');
+		} else {
+			input.files = props.value || [];
+			let message = props.required > 1 ? `At least ${props.required} files are required.` : `At least 1 file is required`;
+			this.updateErrorMessages(input, (props.required ? (input.files.length >= props.required ? true : false) : true), 'filesRequired', message);
+		}
+		input.value = props.value;
+		input = Object.assign(this.state, input);
+		this.setState(input);
 		setTimeout(() => {
 			FormActions.addInput(input);
 		});
@@ -134,14 +118,13 @@ export default class FileUpload extends React.Component {
 
 	validateFiles(e) {
 		e.preventDefault();
-		this.setState({
-			pristine: false
-		});
-
+		let input = {
+			'name': e.target.name,
+			'initial': false,
+			'pristine': false
+		}
 		let newFile = e.target.files[0];
 		let newFiles = e.target.files;
-		let errorMessageFileType;
-		let errorMessageFileSize;
 		let unAcceptedFileType = false;
 		let unAcceptedFileSize = false;
 
@@ -150,35 +133,21 @@ export default class FileUpload extends React.Component {
 			for (let i = 0; i < newFiles.length; i++) {
 				if (!this.verifyFileType(newFile) || !this.verifyFileType(newFiles[i])) {
 					unAcceptedFileType = true;
-					errorMessageFileType = `Accepted file type(s): ${this.props.accept}`;
-					this.updateErrorMessages('add', 'unAcceptedFileType', errorMessageFileType);
-					this.setState({
-						showErrors: true
-					});
 					return;
 				}
 			}
 		}
-		if (!unAcceptedFileType) {
-			this.updateErrorMessages('remove', 'unAcceptedFileType', null);
-		}
+		this.updateErrorMessages(input, !unAcceptedFileType, 'unAcceptedFileType', `Accepted file type(s): ${this.props.accept}`);
 
 		// Verify file size restrictions if any are set (props should be set in mb)
 		for (let i = 0; i < newFiles.length; i++) {
 			if (newFiles[i].size < this.state.minSize || newFiles[i].size > this.state.maxSize ||
 				newFile.size < this.state.minSize || newFile.size > this.state.maxSize) {
 				unAcceptedFileSize = true;
-				errorMessageFileSize = `File size must be between ${this.state.minSize / Math.pow(1024, 2)}MB and ${this.state.maxSize / Math.pow(1024, 2)}MB`;
-				this.updateErrorMessages('add', 'unAcceptedFileSize', errorMessageFileSize);
-				this.setState({
-					showErrors: true
-				});
 				return;
 			}
 		}
-		if (!unAcceptedFileSize) {
-			this.updateErrorMessages('remove', 'unAcceptedFileSize', null);
-		}
+		this.updateErrorMessages(input, !unAcceptedFileSize, 'unAcceptedFileSize', `File size must be between ${this.state.minSize / Math.pow(1024, 2)}MB and ${this.state.maxSize / Math.pow(1024, 2)}MB`);
 
 		if (this.props.singleFile) {
 			let existingFile = this.state.file;
@@ -193,27 +162,12 @@ export default class FileUpload extends React.Component {
 			if (!this.state.showFileList) {
 				this.toggleFileList();
 			}
-			let validity = this.props.required ? newFile.name : true;
-			if (!validity) {
-				let message = 'This is a required field.';
-				this.updateErrorMessages('add', 'filesRequired', message);
-			} else {
-				this.updateErrorMessages('remove', 'filesRequired', null);
-			}
-			let input = {
-				name: e.target.name,
-				value: newFile,
-				valid: validity,
-				formName: this.state.formName,
-				initial: false
-			}
+			this.updateErrorMessages(input, (this.props.required ? newFile.name : true), 'filesRequired', 'This is a required field.');
+			input.value = newFile;
+			input.file = newFile;
+			input = Object.assign(this.state, input);
+			this.setState(input);
 			FormActions.addInput(input);
-			this.setState({
-				name: this.props.name,
-				file: newFile,
-				valid: validity,
-				pristine: false
-			})
 		} else {
 			let existingFiles = this.state.files;
 			let existingFileNames = existingFiles.map((file) => {
@@ -224,14 +178,8 @@ export default class FileUpload extends React.Component {
 
 			// Show error and cancel upload if max files allowed is exceeded
 			if (this.state.files.length + newFiles.length > this.state.maxFiles) {
-				let message = `Max file count is ${this.state.maxFiles}.`;
-				this.updateErrorMessages('add', 'maxFilesExceeded', message);
-				this.setState({
-					showErrors: true
-				});
+				this.updateErrorMessages(input, (this.state.files.length + newFiles.length <= this.state.maxFiles), 'maxFilesExceeded', `Max file count is ${this.state.maxFiles}.`);
 				return;
-			} else {
-				this.updateErrorMessages('remove', 'maxFilesExceeded', null);
 			}
 
 			// Update new file list and check for duplicate file names
@@ -267,47 +215,19 @@ export default class FileUpload extends React.Component {
 			let updatedFiles = existingFiles;
 
 			// Update state of validity
-			let validity = this.props.required ? (existingFiles.length >= this.props.required ? true : false) : true;
-			if (!validity) {
-				let message = this.props.required > 1 ? `At least ${this.props.required} files are required.` : `At least 1 file is required`;
-				this.updateErrorMessages('add', 'filesRequired', message);
-			} else {
-				this.updateErrorMessages('remove', 'filesRequired', null);
-			}
+			let message = this.props.required > 1 ? `At least ${this.props.required} files are required.` : `At least 1 file is required`;
+			this.updateErrorMessages(input, (this.props.required ? (existingFiles.length >= this.props.required ? true : false) : true), 'filesRequired', message);
+
 			if (!this.state.showFileList) {
 				this.toggleFileList();
 			}
-			let input = {
-				name: e.target.name,
-				value: updatedFiles,
-				valid: validity,
-				formName: this.state.formName,
-				initial: false
-			}
+			input.value = updatedFiles;
+			input.filesUploaded = filesUploaded;
+			input.files = updatedFiles;
+			input = Object.assign(this.state, input);
+			this.setState(input);
 			FormActions.addInput(input);
-			this.setState({
-				filesUploaded: filesUploaded,
-				name: this.props.name,
-				files: updatedFiles,
-				valid: validity,
-				pristine: false
-			});
 		}
-	}
-
-	updateErrorMessages(action, key, text) {
-		let newErrorMessages;
-		if (action === 'add') {
-			newErrorMessages = addErrorMessage(this.state.errors, key, text);
-		} else if (action === 'remove') {
-			newErrorMessages = removeErrorMessage(this.state.errors, key);
-		} else {
-			throw new Error(': Action must either be a string of \'add\' or \'remove.\'');
-		}
-		this.setState({
-			errors: newErrorMessages,
-			showErrors: newErrorMessages.length > 0
-		});
 	}
 
 	verifyFileType(file) {
@@ -315,80 +235,71 @@ export default class FileUpload extends React.Component {
 	}
 
 	handleRemoveFile(index) {
+		let input;
 		if (this.props.singleFile) {
-			let file = this.state.file;
-			let validity = this.props.required ? false : true;
-			if (!validity) {
-				let message = 'This is a required field.';
-				this.updateErrorMessages('add', 'filesRequired', message);
-			} else {
-				this.updateErrorMessages('remove', 'filesRequired', null);
-			}
-			this.updateErrorMessages('remove', 'maxFilesExceeded', null);
-			let input = {
-				name: this.props.name,
-				value: {},
-				valid: validity,
-				formName: this.state.formName,
-				initial: false
-			}
-			FormActions.addInput(input);
-			this.setState({
-				file: {},
-				valid: validity
-			})
+			input = {
+				'name': this.props.name,
+				'value': {},
+				'file': {}
+			};
+			this.updateErrorMessages(input, (this.props.required ? false : true), 'filesRequired', 'This is a required field.');
 		} else {
 			let files = this.state.files;
 			files.splice(index, 1);
-			let validity = this.props.required ? (files.length >= this.props.required ? true : false) : true;
-			if (!validity) {
-				let message = this.props.required > 1 ? `At least ${this.props.required} files are required.` : `At least 1 file is required.`;
-				this.updateErrorMessages('add', 'filesRequired', message);
-			} else {
-				this.updateErrorMessages('remove', 'filesRequired', null);
-			}
-			this.updateErrorMessages('remove', 'maxFilesExceeded', null);
-			let input = {
-				name: this.props.name,
-				value: files,
-				valid: validity,
-				formName: this.state.formName,
-				initial: false
-			}
-			FormActions.addInput(input);
-			this.setState({
-				files: files,
-				valid: validity
-			})
+			input = {
+				'name': this.props.name,
+				'value': files
+			};
+			let message = this.props.required > 1 ? `At least ${this.props.required} files are required.` : `At least 1 file is required.`;
+			this.updateErrorMessages(input, (this.props.required ? (files.length >= this.props.required ? true : false) : true), 'filesRequired', message);
 		}
+		this.updateErrorMessages(input, true, 'maxFilesExceeded', null);
+		input = Object.assign(this.state, input);
+		this.setState(input);
+		FormActions.addInput(input);
+	}
+
+	updateErrorMessages(input, condition, key, text) {
+		let newErrorMessages;
+		if (!condition) {
+			let errorText = this.props.validateMessage || text || defaultValidations[this.props.validate].message;
+			newErrorMessages = addErrorMessage(this.state.errors, key, errorText);
+		} else {
+			newErrorMessages = removeErrorMessage(this.state.errors, key);
+		}
+		input.errors = newErrorMessages;
+		input.valid = newErrorMessages.length === 0;
+		input = Object.assign(this.state, input);
+		this.setState(input);
+		setTimeout(() => {
+			FormActions.addInput(input);
+		});
 	}
 
 	handleMouseDown() {
-		this.setState({
-			touched: true
-		})
+		let input = Object.assign(this.state, {'touched': true});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleFocus() {
-		this.setState({
-			focused: true
-		})
+		let input = Object.assign(this.state, {'focused': true, 'blurred': false});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleBlur() {
-		this.setState({
-			focused: false,
-			blurred: true
-		})
+		let input = Object.assign(this.state, {'focused': false, 'blurred': true});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	toggleFileList(e) {
 		if (e) {
 			e.preventDefault();
 		}
-		this.setState({
-			showFileList: !this.state.showFileList
-		})
+		let input = Object.assign(this.state, {'showFileList': !this.state.showFileList});
+		this.setState(input);
 	}
 
 	render() {
@@ -406,7 +317,6 @@ export default class FileUpload extends React.Component {
 
 		let errorClasses = classNames({
 			'file-upload-errors': true,
-			'show': this.state.showErrors,
 			'dirty': !this.state.pristine
 		});
 
@@ -483,24 +393,24 @@ export default class FileUpload extends React.Component {
 }
 
 FileUpload.propTypes = {
-	name: React.PropTypes.string.isRequired,
-	fileName: React.PropTypes.string,
-	validateMessage: React.PropTypes.string,
-	handleFileUpload: React.PropTypes.func.isRequired,
-	accept: React.PropTypes.string,
-	singleFile: React.PropTypes.bool.isRequired,
-	multiple: React.PropTypes.bool,
-	maxFiles: React.PropTypes.number,
-	minSize: React.PropTypes.number,
-	maxSize: React.PropTypes.number,
-	preserveState: React.PropTypes.bool,
-	required: React.PropTypes.number,
-	disabled: React.PropTypes.bool
+	'name': React.PropTypes.string.isRequired,
+	'fileName': React.PropTypes.string,
+	'validateMessage': React.PropTypes.string,
+	'handleFileUpload': React.PropTypes.func.isRequired,
+	'accept': React.PropTypes.string,
+	'singleFile': React.PropTypes.bool.isRequired,
+	'multiple': React.PropTypes.bool,
+	'maxFiles': React.PropTypes.number,
+	'minSize': React.PropTypes.number,
+	'maxSize': React.PropTypes.number,
+	'preserveState': React.PropTypes.bool,
+	'required': React.PropTypes.number,
+	'disabled': React.PropTypes.bool
 }
 
 FileUpload.defaultProps = {
-	maxFiles: 5,
-	minSize: 0,
-	maxSize: 100,
-	preserveState: false
+	'maxFiles': 5,
+	'minSize': 0,
+	'maxSize': 100,
+	'preserveState': false
 };

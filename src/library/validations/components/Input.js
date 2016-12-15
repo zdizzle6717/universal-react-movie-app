@@ -6,10 +6,7 @@ import defaultValidations from '../constants/defaultValidations'
 import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
-
-// TODO: Consider moving all of the components state to the Form Store
-// TODO: Show message text as an array of validation messages
-// TODO: Set invalid if min/max is not met
+import { addErrorMessage, removeErrorMessage } from '../utils/updateErrorMessages';
 
 export default class Input extends React.Component {
 	constructor(props, context) {
@@ -19,7 +16,7 @@ export default class Input extends React.Component {
 			'name': null,
 			'value': null,
 			'formName': null,
-			'messageText': 'Invalid Entry',
+			'errors': [],
 			'valid': true,
 			'initial': true,
 			'touched': false,
@@ -33,7 +30,7 @@ export default class Input extends React.Component {
 		this.handleBlur = this.handleBlur.bind(this);
 		this.validateInit = this.validateInit.bind(this);
 		this.validateInput = this.validateInput.bind(this);
-		this.updateMessageText = this.updateMessageText.bind(this);
+		this.updateErrorMessages = this.updateErrorMessages.bind(this);
     }
 
 	componentDidMount() {
@@ -65,108 +62,98 @@ export default class Input extends React.Component {
 	validateInit(props, propsHaveLoaded = false) {
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('.form').getAttribute('name');
-		let existingInput = FormStore.getInput(formName, props.name);
+		let existingInput = propsHaveLoaded ? false : FormStore.getInput(formName, props.name);
 		if (existingInput) {
 			this.setState(existingInput);
 			return;
 		}
-		let type = props.validate;
 		let value = props.value;
 		let empty = props.required ? (value ? false : true) : false;
-		let validity = defaultValidations[type].regex.test(value)  && !empty;
-		validity = props.inputMatch ? (value === props.inputMatch && validity) : validity;
 		let input = {
 			'name': props.name,
 			'value': value,
-			'formName': formName,
-			'valid': validity
+			'formName': formName
 		};
+		if (props.min || props.max || props.min === 0) {
+			this.updateErrorMessages(input, (value >= props.min), 'minValue', `Min value is ${props.min}`);
+			this.updateErrorMessages(input, (value <= props.max), 'maxValue', `Max value is ${props.max}`);
+		}
+		if (props.inputMatch) {
+			this.updateErrorMessages(input, (value === props.inputMatch), 'inputMatch', 'Fields do not match');
+		}
+		if (props.validate) {
+			this.updateErrorMessages(input, (defaultValidations[props.validate].regex.test(value)), props.validate);
+		}
+		this.updateErrorMessages(input, !empty, 'requiredField', 'Required field');
+		if (propsHaveLoaded) {
+			input.initial = false;
+		}
 		input = Object.assign(this.state, input);
 		this.setState(input);
-		if (propsHaveLoaded) {
-			this.setState({
-				initial: false
-			})
-		}
 		setTimeout(() => {
 			FormActions.addInput(input);
 		});
 	}
 
 	validateInput(e) {
-		let type = this.props.validate;
 		let value = e.target.value;
 		let empty = this.props.required ? (value ? false : true) : false;
-		let validity = defaultValidations[type].regex.test(value) && !empty;
-		validity = this.props.inputMatch ? (value === this.props.inputMatch && validity) : validity;
 		let input = {
 			'name': e.target.name,
-			'value': e.target.value,
-			'valid': validity,
+			'value': value,
 			'initial': false,
 			'pristine': false
 		}
-		if (empty) {
-			input.messageText = 'Required Field';
-			this.setState({
-				'messageText': 'Required Field'
-			})
-		} else if (this.props.inputMatch) {
-			if (value !== this.props.inputMatch) {
-				input.messageText = 'Fields Do Not Match';
-				this.setState({
-					'messageText': 'Fields Do Not Match'
-				})
-			} else {
-				this.updateMessageText(input);
-			}
-		} else {
-			this.updateMessageText(input);
+		if (this.props.min || this.props.max || this.props.min === 0) {
+			this.updateErrorMessages(input, (value >= this.props.min), 'minValue', `Min value is ${this.props.min}`);
+			this.updateErrorMessages(input, (value <= this.props.max), 'maxValue', `Max value is ${this.props.max}`);
 		}
+		if (this.props.inputMatch) {
+			this.updateErrorMessages(input, (value === this.props.inputMatch), 'inputMatch', 'Fields do not match');
+		}
+		if (this.props.validate) {
+			this.updateErrorMessages(input, (defaultValidations[this.props.validate].regex.test(value)), this.props.validate);
+		}
+		this.updateErrorMessages(input, !empty, 'requiredField', 'Required field');
 		input = Object.assign(this.state, input);
 		this.setState(input);
 		FormActions.addInput(input);
 		this.props.handleInputChange(e);
 	}
 
-	updateMessageText(input) {
-		let newText = this.props.validateMessage || defaultValidations[this.props.validate].message;
-		input.messageText = newText;
-		this.setState({
-			'messageText': newText
+	updateErrorMessages(input, condition, key, text) {
+		let newErrorMessages;
+		if (!condition) {
+			let errorText = this.props.validateMessage || text || defaultValidations[this.props.validate].message;
+			newErrorMessages = addErrorMessage(this.state.errors, key, errorText);
+		} else {
+			newErrorMessages = removeErrorMessage(this.state.errors, key);
+		}
+		input.errors = newErrorMessages;
+		input.valid = newErrorMessages.length === 0;
+		input = Object.assign(this.state, input);
+		this.setState(input);
+		setTimeout(() => {
+			FormActions.addInput(input);
 		});
 	}
 
 	handleMouseDown() {
 		let input = Object.assign(this.state, {'touched': true});
-		this.setState({
-			'touched': true
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleFocus() {
 		let input = Object.assign(this.state, {'focused': true, 'blurred': false});
-		this.setState({
-			'focused': true,
-			'blurred': false
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleBlur() {
 		let input = Object.assign(this.state, {'focused': false, 'blurred': true});
-		this.setState({
-			'focused': false,
-			'blurred': true
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	render() {
@@ -185,7 +172,11 @@ export default class Input extends React.Component {
 			<div className="validate-error-element">
 				<input className={validationClasses} type={this.props.type} name={this.props.name} value={this.props.value} placeholder={this.props.placeholder} min={this.props.min} max={this.props.max} onChange={this.validateInput} onMouseDown={this.handleMouseDown} onFocus={this.handleFocus} onBlur={this.handleBlur} disabled={this.props.disabled}/>
 				<div className="validate-errors">
-					<div className="validate-error">{this.state.messageText}</div>
+					{
+						this.state.errors.map((error, i) =>
+							<div key={i} className="validate-error">{error.message}</div>
+						)
+					}
 				</div>
 			</div>
 		)
@@ -197,9 +188,9 @@ Input.propTypes = {
 	'name': React.PropTypes.string.isRequired,
 	'value': React.PropTypes.string,
 	'placeholder': React.PropTypes.string,
-	'min': React.PropTypes.string,
-	'max': React.PropTypes.string,
-	'validate': React.PropTypes.string.isRequired,
+	'min': React.PropTypes.number,
+	'max': React.PropTypes.number,
+	'validate': React.PropTypes.string,
 	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,

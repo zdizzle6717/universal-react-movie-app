@@ -162,7 +162,6 @@ export default class MoviePage extends React.Component {
 
 	handleFileUpload(file) {
 		let movie = this.state.movie;
-		console.log(file);
 		movie.File = {
 			name: file.name,
 			size: file.size,

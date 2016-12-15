@@ -7,8 +7,6 @@ import classNames from 'classnames';
 import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
-// TODO: Consider moving all of the components state to the Form Store
-
 export default class CheckBox extends React.Component {
 	constructor() {
         super();
@@ -59,9 +57,8 @@ export default class CheckBox extends React.Component {
 	validateInit(props, propsHaveLoaded = false) {
 		let elem = ReactDOM.findDOMNode(this);
 		let formName = elem.closest('.form').getAttribute('name');
-		let existingInput = FormStore.getInput(formName, props.name);
+		let existingInput = propsHaveLoaded ? false : FormStore.getInput(formName, props.name);
 		if (existingInput) {
-			console.log(existingInput);
 			this.setState(existingInput);
 			return;
 		}
@@ -99,7 +96,6 @@ export default class CheckBox extends React.Component {
 			'initial': false,
 			'pristine': false
 		}
-		console.log(input.value);
 		input = Object.assign(this.state, input);
 		this.setState(input);
 		FormActions.addInput(input);
@@ -108,38 +104,23 @@ export default class CheckBox extends React.Component {
 
 	handleMouseDown() {
 		let input = Object.assign(this.state, {'touched': true});
-		this.setState({
-			'touched': true
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleFocus() {
 		let input = Object.assign(this.state, {'focused': true, 'blurred': false});
-		this.setState({
-			'focused': true,
-			'blurred': false
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	handleBlur() {
 		let input = Object.assign(this.state, {'focused': false, 'blurred': true});
-		this.setState({
-			'focused': false,
-			'blurred': true
-		});
-		setTimeout(() => {
-			FormActions.addInput(input);
-		});
+		this.setState(input);
+		FormActions.addInput(input);
 	}
 
 	render() {
-		// TODO: These may not necessarily be needed
 		let validationClasses = classNames({
 			'validate-error-element': true,
 			'check-box': true,
