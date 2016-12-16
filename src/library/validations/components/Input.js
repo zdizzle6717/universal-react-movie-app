@@ -124,7 +124,7 @@ export default class Input extends React.Component {
 	updateErrorMessages(input, condition, key, text) {
 		let newErrorMessages;
 		if (!condition) {
-			let errorText = this.props.validateMessage || text || defaultValidations[this.props.validate].message;
+			let errorText = text || defaultValidations[this.props.validate].message;
 			newErrorMessages = addErrorMessage(this.state.errors, key, errorText);
 		} else {
 			newErrorMessages = removeErrorMessage(this.state.errors, key);
@@ -191,7 +191,6 @@ Input.propTypes = {
 	'min': React.PropTypes.number,
 	'max': React.PropTypes.number,
 	'validate': React.PropTypes.string,
-	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,
 	'required': React.PropTypes.bool,

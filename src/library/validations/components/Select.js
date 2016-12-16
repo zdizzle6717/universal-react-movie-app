@@ -141,7 +141,6 @@ export default class Select extends React.Component {
 Select.propTypes = {
 	'name': React.PropTypes.string.isRequired,
 	'value': React.PropTypes.string,
-	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,
 	'required': React.PropTypes.bool,

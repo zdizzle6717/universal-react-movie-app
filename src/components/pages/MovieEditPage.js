@@ -160,16 +160,16 @@ export default class MoviePage extends React.Component {
 		}
 	}
 
-	handleFileUpload(file) {
+	handleFileUpload(files) {
 		let movie = this.state.movie;
 		movie.File = {
-			name: file.name,
-			size: file.size,
-			type: file.type
+			name: files[0].name,
+			size: files[0].size,
+			type: files[0].type
 		}
 		this.setState({
 			movie: movie,
-			file: file
+			file: files[0]
 		})
 	}
 
@@ -283,7 +283,7 @@ export default class MoviePage extends React.Component {
 						<div className="row">
 							<div className="medium-4 columns">
 								<label className="required">Year
-									<Input type="number" name="year" value={this.state.movie.year} handleInputChange={this.handleInputChange} validate="numbersOnly" required={true}/>
+									<Input type="number" name="year" value={this.state.movie.year} handleInputChange={this.handleInputChange} min="1855" max="2555" validate="numbersOnly" required={true}/>
 								</label>
 							</div>
 							<div className="medium-4 columns">

@@ -8,6 +8,7 @@ import FormActions from '../actions/FormActions';
 import FormStore from '../stores/FormStore';
 
 // TODO: Show message text as an array of validation messages
+// TextArea should also accept a validation regex key
 
 export default class TextArea extends React.Component {
 	constructor() {
@@ -144,7 +145,6 @@ TextArea.propTypes = {
 	'value': React.PropTypes.string,
 	'placeholder': React.PropTypes.string,
 	'rows': React.PropTypes.string,
-	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,
 	'required': React.PropTypes.bool,

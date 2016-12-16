@@ -147,7 +147,6 @@ CheckBox.propTypes = {
 	'name': React.PropTypes.string.isRequired,
 	'value': React.PropTypes.bool,
 	'label': React.PropTypes.string.isRequired,
-	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,
 	'required': React.PropTypes.bool,

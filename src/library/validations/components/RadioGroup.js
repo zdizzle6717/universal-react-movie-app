@@ -144,7 +144,6 @@ RadioGroup.propTypes = {
 	'value': React.PropTypes.string,
 	'label': React.PropTypes.string.isRequired,
 	'options': React.PropTypes.array.isRequired,
-	'validateMessage': React.PropTypes.string,
 	'handleInputChange': React.PropTypes.func.isRequired,
 	'preserveState': React.PropTypes.bool,
 	'required': React.PropTypes.bool,
