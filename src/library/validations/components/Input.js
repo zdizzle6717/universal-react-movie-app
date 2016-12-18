@@ -75,8 +75,8 @@ export default class Input extends React.Component {
 			'formName': formName
 		};
 		if (props.min || props.max || props.min === 0) {
-			this.updateErrorMessages(input, (value >= props.min), 'minValue', `Min value is ${props.min}`);
-			this.updateErrorMessages(input, (value <= props.max), 'maxValue', `Max value is ${props.max}`);
+			this.updateErrorMessages(input, (parseFloat(value) >= parseFloat(props.min)), 'minValue', `Min value is ${props.min}`);
+			this.updateErrorMessages(input, (parseFloat(value) <= parseFloat(props.max)), 'maxValue', `Max value is ${props.max}`);
 		}
 		if (props.inputMatch) {
 			this.updateErrorMessages(input, (value === props.inputMatch), 'inputMatch', 'Fields do not match');
@@ -105,8 +105,8 @@ export default class Input extends React.Component {
 			'pristine': false
 		}
 		if (this.props.min || this.props.max || this.props.min === 0) {
-			this.updateErrorMessages(input, (value >= this.props.min), 'minValue', `Min value is ${this.props.min}`);
-			this.updateErrorMessages(input, (value <= this.props.max), 'maxValue', `Max value is ${this.props.max}`);
+			this.updateErrorMessages(input, (parseFloat(value) >= parseFloat(this.props.min)), 'minValue', `Min value is ${this.props.min}`);
+			this.updateErrorMessages(input, (parseFloat(value) <= parseFloat(this.props.max)), 'maxValue', `Max value is ${this.props.max}`);
 		}
 		if (this.props.inputMatch) {
 			this.updateErrorMessages(input, (value === this.props.inputMatch), 'inputMatch', 'Fields do not match');
